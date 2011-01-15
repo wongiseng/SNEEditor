@@ -1,0 +1,36 @@
+div.WireIt-Container {
+	width: 250px; /* Prevent the modules from scratching on the right */
+	/*height: 100px;*/
+}
+div.WireIt-Terminal {
+	left : 111px ;
+}
+#WiringEditor-runButton button {
+	background: transparent url(lib/editor/assets/bullet_go.png) no-repeat scroll 10% 50%;
+}
+ 
+div.WireIt-Container div.inputEx-Group div.inputEx-label {
+	width: auto;
+}
+ 
+div.inputEx-TypeField-PropertiesPanel {
+	z-index: 7;
+}
+ 
+div.inputEx-Field {
+	float: right !important;
+	padding-right: 10px;
+}
+ 
+/* Comment Module */
+div.WireIt-Container.WiringEditor-module-comment { width: 200px; }
+div.WireIt-Container.WiringEditor-module-comment div.body { background-color: #EEEE66; }
+div.WireIt-Container.WiringEditor-module-comment div.body textarea { background-color: transparent; font-weight: bold; border: 0; }
+ 
+ 
+/* Composed Module */
+div.ComposedModule { background-color: #DDDDAA; }
+
+#aida-tree {
+	background-color : #fff;	
+}

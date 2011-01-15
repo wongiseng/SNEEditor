@@ -1,0 +1,256 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns="http://cinegrid.uvalight.nl/owl/cdl-amsterdam-2.0.owl#"
+    xmlns:protege="http://protege.stanford.edu/plugins/owl/protege#"
+    xmlns:xsp="http://www.owl-ontologies.com/2005/08/07/xsp.owl#"
+    xmlns:ndl-ams="http://cinegrid.uvalight.nl/owl/ndl-amsterdam.owl#"
+    xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:cdl="http://cinegrid.uvalight.nl/owl/cdl/2.0#"
+    xmlns:ndl-domain="http://cinegrid.uvalight.nl/owl/ndl-domain.owl#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:geo="http://cinegrid.uvalight.nl/owl/wgs84_pos.owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+    xmlns:ndl-topo="http://cinegrid.uvalight.nl/owl/ndl-topology.owl#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xml:base="http://cinegrid.uvalight.nl/owl/cdl-amsterdam-2.0.owl">
+  <owl:Ontology rdf:about="">
+    <owl:imports rdf:resource="http://cinegrid.uvalight.nl/owl/cdl/2.0"/>
+    <owl:imports rdf:resource="http://cinegrid.uvalight.nl/owl/ndl-amsterdam.owl"/>
+  </owl:Ontology>
+  <geo:SpatialThing rdf:ID="SpatialThing_7"/>
+  <cdl:Node rdf:ID="Amsterdam">
+    <geo:location>
+      <geo:Point rdf:ID="pos_ams">
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >52.35628</geo:lat>
+        <geo:alt rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        ></geo:alt>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >4.952577</geo:long>
+      </geo:Point>
+    </geo:location>
+    <cdl:hasElements>
+      <cdl:Host rdf:ID="cgvideo">
+        <cdl:hasDomain>
+          <ndl-domain:AdministrativeDomain rdf:ID="UvA"/>
+        </cdl:hasDomain>
+        <cdl:hostName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >cgvideo.uvalight.nl</cdl:hostName>
+        <cdl:providesService>
+          <cdl:SAGEStreamer rdf:ID="SAGEStreamer_cgvideo">
+            <cdl:providedBy rdf:resource="#cgvideo"/>
+          </cdl:SAGEStreamer>
+        </cdl:providesService>
+        <cdl:cpuThreads rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >8</cdl:cpuThreads>
+        <cdl:providesService>
+          <cdl:LocalStore rdf:ID="LocalStore_cgvideo">
+            <cdl:providedBy rdf:resource="#cgvideo"/>
+          </cdl:LocalStore>
+        </cdl:providesService>
+        <cdl:osVersion rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >9.04</cdl:osVersion>
+        <cdl:cpuCache rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1024</cdl:cpuCache>
+        <cdl:cpuArch rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >amd64</cdl:cpuArch>
+        <cdl:osFlavor rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Ubuntu</cdl:osFlavor>
+        <cdl:osName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Linux</cdl:osName>
+        <cdl:cpuFreq rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >2900</cdl:cpuFreq>
+        <cdl:providesService>
+          <cdl:SAGEVisualizer rdf:ID="SAGEVisualizer_cgvideo">
+            <cdl:pixelsX rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+            >3840</cdl:pixelsX>
+            <cdl:pixelsY rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+            >2160</cdl:pixelsY>
+            <cdl:providedBy rdf:resource="#cgvideo"/>
+          </cdl:SAGEVisualizer>
+        </cdl:providesService>
+        <owl:sameAs rdf:resource="http://cinegrid.uvalight.nl/owl/ndl-amsterdam.owl#cgvideo"/>
+      </cdl:Host>
+    </cdl:hasElements>
+    <cdl:hasElements>
+      <cdl:Host rdf:ID="cgdaemon">
+        <cdl:providesService>
+          <cdl:LocalStore rdf:ID="LocalStore_cgdaemon">
+            <cdl:providedBy rdf:resource="#cgdaemon"/>
+          </cdl:LocalStore>
+        </cdl:providesService>
+        <cdl:cpuThreads rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >4</cdl:cpuThreads>
+        <cdl:providesService>
+          <cdl:SAGEStreamer rdf:ID="SAGEStreamer_cgdaemon">
+            <cdl:providedBy rdf:resource="#cgdaemon"/>
+          </cdl:SAGEStreamer>
+        </cdl:providesService>
+        <owl:sameAs rdf:resource="http://cinegrid.uvalight.nl/owl/ndl-amsterdam.owl#cgdaemon"/>
+        <cdl:cpuFreq rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1000</cdl:cpuFreq>
+        <cdl:cpuCache rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1024</cdl:cpuCache>
+        <cdl:osFlavor rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Ubuntu</cdl:osFlavor>
+        <cdl:hostName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >cgdaemon.uva.netherlight.nl</cdl:hostName>
+        <cdl:osName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Linux</cdl:osName>
+        <cdl:osVersion rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >8.04</cdl:osVersion>
+        <cdl:cpuArch rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >amd64</cdl:cpuArch>
+      </cdl:Host>
+    </cdl:hasElements>
+    <cdl:hasElements>
+      <cdl:Host rdf:ID="cgdevil">
+        <cdl:cpuThreads rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</cdl:cpuThreads>
+        <cdl:cpuArch rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >xen-amd64</cdl:cpuArch>
+        <cdl:osFlavor rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Ubuntu</cdl:osFlavor>
+        <cdl:cpuFreq rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >2222</cdl:cpuFreq>
+        <owl:sameAs rdf:resource="http://cinegrid.uvalight.nl/owl/ndl-amsterdam.owl#cgdevil"/>
+        <cdl:osName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Linux</cdl:osName>
+        <cdl:cpuCache rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1024</cdl:cpuCache>
+        <cdl:osVersion rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >8.10</cdl:osVersion>
+        <cdl:hostName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >cgdevil.uvalight.nl</cdl:hostName>
+      </cdl:Host>
+    </cdl:hasElements>
+    <cdl:hasElements>
+      <cdl:Host rdf:ID="cgrtfm">
+        <cdl:osVersion rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >8.04</cdl:osVersion>
+        <cdl:cpuFreq rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >2222</cdl:cpuFreq>
+        <cdl:cpuCache rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1024</cdl:cpuCache>
+        <cdl:cpuArch rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >xen-amd64</cdl:cpuArch>
+        <cdl:hostName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >cgrtfm.vlan400.uvalight.net</cdl:hostName>
+        <owl:sameAs rdf:resource="http://cinegrid.uvalight.nl/owl/ndl-amsterdam.owl#cgrtfm"/>
+        <cdl:cpuThreads rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</cdl:cpuThreads>
+        <cdl:osFlavor rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Ubuntu</cdl:osFlavor>
+        <cdl:osName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Linux</cdl:osName>
+      </cdl:Host>
+    </cdl:hasElements>
+    <cdl:hasElements>
+      <cdl:Host rdf:ID="basketcees">
+        <cdl:hostName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >basketcees.science.uva.nl</cdl:hostName>
+        <cdl:cpuThreads rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >8</cdl:cpuThreads>
+        <cdl:osName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >SunOS</cdl:osName>
+        <cdl:cpuArch rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >i386</cdl:cpuArch>
+        <cdl:cpuFreq rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >2356</cdl:cpuFreq>
+        <owl:sameAs rdf:resource="http://cinegrid.uvalight.nl/owl/ndl-amsterdam.owl#BasketCees"/>
+        <cdl:providesService>
+          <cdl:NFSStore rdf:ID="NFSStore_basketcees">
+            <cdl:providedBy rdf:resource="#basketcees"/>
+          </cdl:NFSStore>
+        </cdl:providesService>
+        <cdl:providesService>
+          <cdl:LocalStore rdf:ID="LocalStore_basketcees">
+            <cdl:providedBy rdf:resource="#basketcees"/>
+          </cdl:LocalStore>
+        </cdl:providesService>
+        <cdl:osFlavor rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Solaris</cdl:osFlavor>
+        <cdl:osVersion rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >5.11</cdl:osVersion>
+      </cdl:Host>
+    </cdl:hasElements>
+    <cdl:hasElements>
+      <cdl:Host rdf:ID="suitcees">
+        <cdl:osVersion rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >5.11</cdl:osVersion>
+        <cdl:providesService>
+          <cdl:iRODSStore rdf:ID="iRODSStore_suitcees">
+            <cdl:providedBy rdf:resource="#suitcees"/>
+          </cdl:iRODSStore>
+        </cdl:providesService>
+        <owl:sameAs rdf:resource="http://cinegrid.uvalight.nl/owl/ndl-amsterdam.owl#SuitCees"/>
+        <cdl:cpuFreq rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >2356</cdl:cpuFreq>
+        <cdl:osFlavor rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Solaris</cdl:osFlavor>
+        <cdl:cpuThreads rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >8</cdl:cpuThreads>
+        <cdl:hostName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >suitcees.science.uva.nl</cdl:hostName>
+        <cdl:providesService>
+          <cdl:LocalStore rdf:ID="LocalStore_suitcees">
+            <cdl:providedBy rdf:resource="#suitcees"/>
+          </cdl:LocalStore>
+        </cdl:providesService>
+        <cdl:providesService>
+          <cdl:NFSStore rdf:ID="NFSStore_suitcees">
+            <cdl:providedBy rdf:resource="#suitcees"/>
+          </cdl:NFSStore>
+        </cdl:providesService>
+        <cdl:cpuArch rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >i386</cdl:cpuArch>
+        <cdl:osName rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >SunOS</cdl:osName>
+      </cdl:Host>
+    </cdl:hasElements>
+    <cdl:hasElements>
+      <cdl:Storage rdf:ID="Storage_12"/>
+    </cdl:hasElements>
+  </cdl:Node>
+  <cdl:Node rdf:ID="Prague">
+    <geo:location>
+      <geo:Point rdf:ID="pos_prague">
+        <geo:alt rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Prague</geo:alt>
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >14.4166667</geo:long>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >50.083333</geo:lat>
+      </geo:Point>
+    </geo:location>
+  </cdl:Node>
+  <cdl:Node rdf:ID="SanDiego">
+    <geo:location>
+      <geo:Point rdf:ID="pos_sandiego">
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >14.416667</geo:long>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >50.083333</geo:lat>
+        <geo:alt rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        ></geo:alt>
+      </geo:Point>
+    </geo:location>
+  </cdl:Node>
+  <cdl:Node rdf:ID="Tokyo">
+    <geo:location>
+      <geo:Point rdf:ID="pos_tokyo">
+        <geo:long rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >139.766667</geo:long>
+        <geo:lat rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        ></geo:lat>
+        <geo:alt rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Tokyo</geo:alt>
+      </geo:Point>
+    </geo:location>
+  </cdl:Node>
+  <ndl-topo:Location rdf:ID="Location_8"/>
+</rdf:RDF>
+
+<!-- Created with Protege (with OWL Plugin 3.4.1, Build 536)  http://protege.stanford.edu -->
