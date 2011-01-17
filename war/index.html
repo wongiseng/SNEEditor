@@ -1,0 +1,170 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
+<!-- The HTML 4.01 Transitional DOCTYPE declaration-->
+<!-- above set at the top of the file will set     -->
+<!-- the browser's rendering engine into           -->
+<!-- "Quirks Mode". Replacing this declaration     -->
+<!-- with a "Standards Mode" doctype is supported, -->
+<!-- but may lead to some differences in layout.   -->
+
+<html> 
+<head> 
+
+	<title>SNE Editor</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> 
+	 
+	<!-- WireIt CSS --> 
+	<link rel="stylesheet" type="text/css" href="assets/WireIt.css" /> 
+	<link rel="stylesheet" type="text/css" href="lib/editor/assets/WireItEditor.css" /> 
+	 
+	
+	
+	<!-- YUI CSS --> 
+	<link rel="stylesheet" type="text/css" href="lib/yui/assets/skins/sam/skin.css" /> 
+	<link rel="stylesheet" type="text/css" href="lib/yui/reset-fonts-grids/reset-fonts-grids.css" /> 
+	<link rel="stylesheet" type="text/css" href="lib/yui/tabview/assets/skins/sam/tabview-skin.css">
+	<link rel="stylesheet" type="text/css" href="lib/editor/lib/accordionview/assets/skins/sam/accordionview.css" />
+	<!--  Uncomment for YUI logging/debugging 
+	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/logger/assets/skins/sam/logger.css">
+	 -->
+	<!-- InputEx CSS --> 
+	<link type='text/css' rel='stylesheet' href='lib/inputex/css/inputEx.css' /> 
+	
+	<!-- Modified CSS overwriting above sam skin default css --> 
+	<link type='text/css' rel='stylesheet' href='css/SNEEditor.css' /> 
+	<link rel="stylesheet" type="text/css" href="css/tree.css">
+	  
+	<!-- YUI Script Libraries --> 
+	<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/utilities/utilities.js"></script> 
+	<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/resize/resize-min.js"></script> 
+	<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/layout/layout-min.js"></script> 
+	<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/container/container-min.js"></script> 
+	<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/json/json.js"></script> 
+	<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/button/button-min.js"></script> 
+	<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/tabview/tabview-min.js"></script> 
+
+	<script type='text/javascript' src="lib/editor/lib/accordionview/accordionview-min.js"  ></script> 
+	<script type="text/javascript" src="lib/excanvas.js"></script> 
+ 
+	<!-- YUI for Tabview: --> 
+	<script src="http://yui.yahooapis.com/2.8.1/build/yahoo-dom-event/yahoo-dom-event.js"></script> 
+	<script src="http://yui.yahooapis.com/2.8.1/build/element/element-min.js"></script> 
+	<script src="http://yui.yahooapis.com/2.8.1/build/tabview/tabview-min.js"></script>  
+	
+	<!--  YUI needed for TreeView  -->
+	<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/yahoo-dom-event/yahoo-dom-event.js"></script> 
+	<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/connection/connection.js"></script> 
+	<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/treeview/treeview-min.js"></script> 
+	<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+	<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/uploader/uploader-min.js"></script>
+	<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/dragdrop/dragdrop-min.js"></script>
+
+
+	<!--  YUI 3 Needed for JSONP  -->
+	<script type="text/javascript" src="http://yui.me-admin.net/3.2.0/build/yui/yui-min.js"></script> 
+	
+	<!-- Source file -->
+	<script src="http://yui.yahooapis.com/2.8.1/build/logger/logger-min.js"></script>
+ 
+	<!-- Main javascript codes to mess around  -->
+	<!-- Code from WireIt Library, it is modified here and there so become SNEWireIT -->
+	<script type="text/javascript" src="js/SNEWireIT.js"></script> 
+	
+	<!-- Code from WireIt Library, it is modified here and there so become SNEWireIT -->
+	<script type="text/javascript" src="js/SNEAjaxAdapter.js"></script>
+	
+	<script type="text/javascript" src="js/ExecutionFrame.js"></script> 
+	
+	<!--  Main entrance, also SNE is defined here, needed by the following scripts  --> 
+	<script type="text/javascript" src="js/SNEMain.js"></script>
+	
+	<!-- Module responsible for generation of tree on the left side  -->
+	<script type="text/javascript" src="js/SNEModTree.js"></script>
+	
+	<!-- SNE Editor extending SNEWireIT  -->
+	<script type="text/javascript" src="js/SNEEditor.js"></script>
+	
+	<!-- Custom defined container for SNE Concepts --> 
+	<script type="text/javascript" src="js/SNEContainers.js"></script>
+	
+	<!-- Additional utilities and constants --> 
+	<script type="text/javascript" src="js/SNEUtil.js"></script>
+	
+	<!-- For debugging purpose -->
+	<script type="text/javascript" src="lib/prettyprint.js"></script>  
+
+	<!-- For Loading OWL--> 
+	<script type="text/javascript" src="js/SNEOWLUploader.js"></script>
+	
+	  
+	<script> 
+	//once the DOM has loaded, we can go ahead and enter the main. 
+	//Last boolean parameter is important to override context
+	//Ref: http://developer.yahoo.com/yui/docs/YAHOO.util.Event.html#method_onDOMReady
+	YAHOO.util.Event.onDOMReady( SNE.init, SNE, true);
+	
+	</script> 
+
+
+</head> 
+ 
+<body class="yui-skin-sam"> 
+	<div id="top"> 
+		<div class="logo">SNE Editor</div>
+		 
+		<div id="toolbar"></div>  
+		<div class="topright"> 
+			<a href="http://www.science.uva.nl/research/sne/">SNE's</a> Network Topology OWL Editor for <a href="http://www.cinegrid.org/">Cinegrid</a> 
+		</div> 
+	</div>
+	 
+ 	<div id="left"> 
+			<div id='aida-tree' ></div>  
+	</div> 
+	
+	<div id="right"> 
+		<ul id="accordionView"> 
+		<li> 
+				<h2>Properties</h2> 
+				<div> 
+					<div id="propertiesForm"></div> 
+				</div> 
+		</li> 
+		<li> 
+				<h2>Outline</h2> 
+				<div style='position: relative;'> 
+					<div id="layerMap"></div> 
+				</div> 
+		</li> 
+		<li> 
+				<h2>Info</h2> 
+				<div>
+				<div style="padding: 10px;"> 
+					<p>SNE Cinegrid editor is designed to allow user to easily create network topology based on Network Description Language and Cinegrid Ontology.
+					   Extensions to other ontologies will be possible in the future.
+					</p> 
+				</div> 
+				</div> 
+		</li>
+
+		</ul> 
+	</div> 
+	
+	<!-- Main Panel -->			
+	<div id="center" >
+		<div id="graph-content" height="1000px"></div>
+		<div id="owl-content"  	class="WireIt-Layer"></div>
+ 	</div>
+ 	
+	<!-- This is the content of the HELP panel --> 
+	<div id="helpPanel"> 
+	    <div class="hd">SNE Editor for Cinegrid</div> 
+	    <div class="bd" style="text-align: left; width:500px;"> 
+					<p>
+						SNE <a href="http://cinegrid.org">Cinegrid</a> editor is designed to allow user to easily create network topology based on <a target=_blank href="http://www.science.uva.nl/research/sne/ndl/">Network Description Language</a> and Cinegrid Ontology.
+					   	Extensions to other ontologies will be possible in the future.
+					</p> 
+	    </div> 	    
+    </div> 
+
+</body> 
+</html> 
