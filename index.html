@@ -32,25 +32,28 @@
     </div>
     <a href="http://sneneteditor.appspot.com" title="SNE Editor"><img src="http://imgur.com/VmOGGl.jpg"></a>
   
-    <p>SNE Editor developed to allow user to edit an instance of an existing OWL Ontology. 
+    <p>SNE Editor developed to allow user to edit an instance of an existing OWL Ontology. </p>
+    <p>This editor can be used to instantiate OWL classes, defines its data properties and configure its object properties.</p>
+    <p>Form will be generated for filling data properties related to an OWL Classes. Object properties will be represented as input and output port. Input port of an OWL Class when the object property is has the OWL class as a domain and Output port if the OWL Class is a domain of the object properties. </p>
+    <p>Existing OWL Ontology needs to be first loaded into Sesame repository, all the forms generated based on sparql query performed into the sesame repository.</p>
 
-This editor can be used to instantiate OWL classes, defines its data properties and configure its object properties.
+    <h2>Dependencies</h2>
+	<ul> 
+	<li><a href="http://code.google.com/appengine/">Google App Engine</a> Java libraru</li>
+	<li><a href="http://neyric.github.com/wireit/">WireIT</a> Javascript library and WireIt Editor template </li>
+        <li><a href="http://owlapi.sourceforge.net/documentation.html">OWL API</a></li>
+        <li><a href="http://www.openrdf.org">Sesame</a> RDF storage </a> </li>
+ 	<li><a href="http://adaptivedisclosure.org">AIDA</a> Toolkit </li>  
+	</ul>
 
-Form will be generated for filling data properties related to an OWL Classes.
+ 	<h2>Install</h2>
+	<p>Fork from Github, create GAE apps on eclipse, and deploy on your own GAE.</p>
 
-Object properties will be represented as input and output port. Input port of an OWL Class when the object property is has the OWL class as a domain,
-and Output port if the OWL Class is a domain of the object properties.
-
-Existing OWL Ontology needs to be first loaded into Sesame repository, all the forms generated based on sparql query performed into the sesame repository.</p><h2>Dependencies</h2>
-<p>Google App Engine, <a href="http://neyric.github.com/wireit/">WireIT Javascript Libraries</a> , <a href="owlapi.sourceforge.net/documentation.html">OWL API</a></p>
-<h2>Install</h2>
-<p>Pull, create GAE apps on eclipse, and deploy on your own GAE.</p>
-<h2>License</h2>
-<p>Not sure yet.</p>
+	<h2>License</h2>
+<p> <a href="http://neyric.github.com/wireit/license.txt">MIT</a> License (following WireIt).</p>
 <h2>Authors</h2>
 <p>A. Wibisono (a.wibisono at gmail.com)
-<br/>
-<br/>      </p>
+</p>
 
     <h2>Download</h2>
     <p>
