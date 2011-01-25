@@ -34,8 +34,10 @@ public class OWLTransformer {
 	OWLOntology ontology;
 	
 	public OWLTransformer() throws OWLOntologyCreationException {
+		
 		IRI iri = IRI.create("http://cinegrid.uvalight.nl/owl/cdl/2.0");
 		owlManager=OWLManager.createOWLOntologyManager();
+		// Default when prefix are not defined
 		prefixManager = new DefaultPrefixManager("http://cinegrid.uvalight.nl/owl/cdl/2.0#");
 		owlFactory = owlManager.getOWLDataFactory();
 		//ontology = owlManager.loadOntologyFromOntologyDocument(iri);

@@ -10,6 +10,7 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import org.restlet.ext.jaxrs.internal.core.MultivaluedMapImpl;
 
+
 /**
  * Responsible for calling directly sesame repository and getting necessary
  * informations. TODO : - Use proper way of parsing query results, instead of my
@@ -20,28 +21,30 @@ import org.restlet.ext.jaxrs.internal.core.MultivaluedMapImpl;
  */
 public class SesameConnector
 {
-	// private String REPOSITORY = "CinegridOWL";
-	private String REPOSITORY	  = "sne_cine_ndldomain";
-	private String SERVER_LOCATION = "http://dev.adaptivedisclosure.org/openrdf-workbench";
+	// Default repository and server location in case they were not initialized.
+	private String REPOSITORY			= "sne_cine_ndldomain";
+	private String SERVER_LOCATION 		= "http://dev.adaptivedisclosure.org/openrdf-workbench";
 
 	public SesameConnector()
 	{
 		// using default stuffs above;
-		REPOSITORY = "sne_cine_ndldomain";
+		REPOSITORY 		= "sne_cine_ndldomain";
 		SERVER_LOCATION = "http://dev.adaptivedisclosure.org/openrdf-workbench";
 	}
 
 	public SesameConnector(String serverLocation, String repositoryName)
 	{
 		SERVER_LOCATION = serverLocation;
-		REPOSITORY = repositoryName;
+		REPOSITORY 		= repositoryName;
 	}
 	
 	public void setRepository(String repository)
 	{
 		REPOSITORY = repository;
 	}
-
+	public String getRepository(){
+		return REPOSITORY;
+	}
 	private String getSesameLocation()
 	{
 		return SERVER_LOCATION + "/repositories/" + REPOSITORY + "/query";
@@ -95,7 +98,7 @@ public class SesameConnector
 	 * Getting Data property as string list of DataProperties with associatetd
 	 * Domain, Ranges and Comments
 	 */
-	public String getDataPropertyDomainRangeComments()
+	public String getOWLDataPropertyDomainRangeComments()
 	{
 		MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl<String, String>();
 		queryParams.add("queryLn", "SPARQL");
@@ -107,27 +110,66 @@ public class SesameConnector
 								+ "SELECT DISTINCT ?DataProperty ?Domain ?Range ?Comment"
 								+ "		WHERE { ?DataProperty rdf:type owl:DatatypeProperty . "
 								+ "		OPTIONAL {?DataProperty rdfs:domain ?Domain } . "
-								+ "      OPTIONAL {?DataProperty rdfs:range ?Range }   . "
-								+ "      OPTIONAL {?DataProperty rdfs:comment ?Comment } }");
+								+ "     OPTIONAL {?DataProperty rdfs:range ?Range }   . "
+								+ "     OPTIONAL {?DataProperty rdfs:comment ?Comment } }");
 
 		return doQuery(queryParams, getSesameLocation());
 	}
 
-	public String getRDFPropertyDomainRange()
+	/**
+	 * RDF version of above function for owl, the difference here is that we have only rdfs schema here, no owls.
+	 * Which also means no owl:DataProperty, but we have rdf:Property. 
+	 * We identify and differentiate DataProperty from its ranges, we look for those which have the following ranges :
+	 * 		- rdfs:Literal
+	 * 		- xsd:string,float,integer,boolean,dateTime
+	 * @return
+	 */
+	public String getRDFDataPropertyDomainRangeComments()
 	{
 		MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl<String, String>();
 		queryParams.add("queryLn", "SPARQL");
-		queryParams.add("query", "");
-
-		return "";
+		String queryString = 
+			"PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>"
+			+ "PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
+			+ "PREFIX xsd:<http://www.w3.org/2001/XMLSchema#>"
+			+ "SELECT DISTINCT ?DataProperty ?Domain ?Range ?Comment"
+			+ "		WHERE { ?DataProperty rdf:type rdf:Property . "
+			+ "		 OPTIONAL {?DataProperty rdfs:domain ?Domain } . "
+			+ "      OPTIONAL {?DataProperty rdfs:range ?Range }   . "
+			+ "      OPTIONAL {?DataProperty rdfs:comment ?Comment } . " 
+			+ " FILTER(?Range=xsd:float || ?Range=xsd:string || ?Range=xsd:boolean "
+			+ "     || ?Range=xsd:dateTime || ?Range=xsd:integer || ?Range=rdfs:Literal)}";
+		
+		queryParams.add("query",queryString);
+		
+		return doQuery(queryParams, getSesameLocation());
 	}
-
+	public String getRDFObjectPropertyDomainRangeComments()
+	{
+		MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl<String, String>();
+		queryParams.add("queryLn", "SPARQL");
+		String queryString = 
+				"PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>"
+				+ "PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
+				+ "PREFIX xsd:<http://www.w3.org/2001/XMLSchema#>"
+				+ "SELECT DISTINCT ?ObjectProperty ?Domain ?Range ?Comment"
+				+ "		WHERE { ?ObjectProperty rdf:type rdf:Property . "
+				+ "		 OPTIONAL {?ObjectProperty rdfs:domain ?Domain } . "
+				+ "      OPTIONAL {?ObjectProperty rdfs:range ?Range }   . "
+				+ "      OPTIONAL {?ObjectProperty rdfs:comment ?Comment } . " 
+				+ " FILTER(bound(?Range) && ?Range!=xsd:float && ?Range!=xsd:string && ?Range!=xsd:boolean "
+				+ "     && ?Range!=xsd:dateTime && ?Range!=xsd:integer &&?Range!=rdfs:Literal )}";
+		
+		queryParams.add("query",queryString);
+		
+		return doQuery(queryParams, getSesameLocation());
+	}
 	/*
 	 * Getting Object property as string list of DataProperties with associatetd
 	 * Domain, Ranges No Object properties was containing comments. Skip for
 	 * now.
 	 */
-	public String getObjectPropertyDomainRangeComments()
+	public String getOWLObjectPropertyDomainRangeComments()
 	{
 		MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl<String, String>();
 		queryParams.add("queryLn", "SPARQL");
@@ -209,13 +251,13 @@ public class SesameConnector
 	{
 		SesameConnector connector = new SesameConnector(
 				"http://dev.adaptivedisclosure.org/openrdf-workbench",
-				"ndl_vpn_rdf");
+				"sne_ndl_domain");
 		System.out.println("RDFSClasses\n==========");
 		System.out.println(connector.getRDFSClasses());
 		System.out.println("DataProperties\n==========");
 		System.out.println(connector.getParentChildren());
 		System.out.println("ObjectProperties\n==========");
-		System.out.println(connector.getObjectPropertyDomainRangeComments());
+		System.out.println(connector.getRDFObjectPropertyDomainRangeComments());
 		System.out.println("ParentChildren\n==========");
 		System.out.println(connector.getParentChildren());
 
