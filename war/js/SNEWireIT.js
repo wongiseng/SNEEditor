@@ -8673,13 +8673,15 @@ lang.extend(WireIt.WiringEditor, WireIt.BaseEditor, {
 	
 		this.preventLayerChangedEvent = true;
 	
-	   this.layer.clear(); 
+		this.layer.clear(); 
 
-	   this.propertiesForm.clear(false); // false to tell inputEx to NOT send the updatedEvt
+		this.propertiesForm.clear(false); // false to tell inputEx to NOT send the updatedEvt
 
 		this.markSaved();
 
 		this.preventLayerChangedEvent = false;
+	 
+		this.tabViews.selectTab(0)
 	 },
 
 	 /**
