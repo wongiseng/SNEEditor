@@ -156,8 +156,9 @@ SNEOWLUploader = function(){
 		this.onUploadResponse = function(event) {
 			var wirings = YAHOO.lang.JSON.parse(event.data);
 			// This is the place responsible for loading Wiring.
-			
+			SNE.editor.tabViews.selectTab(0);
 			SNE.editor.loadThisWiring(wirings);
+			
 		}
 		
 		
