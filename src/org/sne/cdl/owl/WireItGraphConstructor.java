@@ -1,12 +1,15 @@
 package org.sne.cdl.owl;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.Vector;
-
-
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -110,8 +113,8 @@ public class WireItGraphConstructor
         					appendLine(4,result, keyValue( propertyKey, propertyValue )+",");            					
         				}
         				
-        				if(dpAxioms.size() > 0)
-        						result.deleteCharAt(result.length()-1);
+        				// Result always ended with additional comma we need to remove
+        				result.deleteCharAt(result.length()-1);
         				
         			//End of processing values/data properties
         			appendLine(2,result, "}");	
@@ -145,14 +148,22 @@ public class WireItGraphConstructor
         			Set<OWLObjectPropertyAssertionAxiom> opAxioms = theOntology.getObjectPropertyAssertionAxioms(individu);
         			for(OWLObjectPropertyAssertionAxiom opa : opAxioms){
         				String predicateID	= opa.getProperty().toString();
+        				String subjectID 	= opa.getSubject().toStringID();
+        				String objectID   	= opa.getObject().toStringID();
+        				
+        				// if one of these are not available, don't bother creating wire.
+        				if(modIds.get(subjectID) == null) continue;
+        				if(modIds.get(objectID) == null) continue;
         				
         				appendLine(1, result, "{");
         				
-            				String subjectID 	= opa.getSubject().toStringID();
+            				
+
             				appendLine(2, result, quote("src")+":"+ "{"+keyValue("moduleId", modIds.get(subjectID).toString())+","+
             															keyValue("terminal", lastPart(predicateID))+"},");
                     			
-            				String objectID   	= opa.getObject().toStringID();		
+            						
+            				
             				appendLine(2, result, quote("tgt")+":"+ "{"+keyValue("moduleId", modIds.get(objectID).toString())+","+
         																keyValue("terminal", lastPart(predicateID))+"},");
                 			
@@ -175,17 +186,25 @@ public class WireItGraphConstructor
 	
 	// I hate to see \" within string concatenation so make it as function
 	String quote(String x){
-		return "\""+x+"\"";
+		String result = "\""+x+"\"";
+		//Sanitize this thing to exclude characters harmful for the json.
+
+		return result;
 	}
 	String keyValue(String key, String value){
+		
 		return quote(key)+ "  :  " + quote(value);
+		
 	}
 	String lastPart(String URI){
 		String result= URI;
 		if(URI.lastIndexOf("#")<0) return result; 
+		
 		result =result.substring(URI.lastIndexOf("#")+1);
+		
 		if(result.endsWith(">"))
 			return result.substring(0,result.length()-1);
+		
 		return result;
 	}
 	void appendLine(StringBuffer result, String strAppend){
@@ -194,5 +213,18 @@ public class WireItGraphConstructor
 	void appendLine(int pad, StringBuffer result, String strAppend){
 		String pads = "";for(int i=0;i<4*pad;i++)pads += " ";
 		result.append("\n"+pads+strAppend);
+	}
+	
+	public static void main(String[] args) throws IOException, OWLOntologyCreationException
+	{
+		
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File("total.rdf"))));
+		StringBuffer fileBuffer = new StringBuffer();
+		String tmp=null ;
+		while((tmp=reader.readLine()) != null){
+			fileBuffer.append(tmp+'\n');
+		}
+		WireItGraphConstructor wigc = new WireItGraphConstructor(fileBuffer.toString());
+		System.out.println(wigc.getWireItGraph());
 	}
 }
