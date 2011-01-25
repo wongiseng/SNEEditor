@@ -41,7 +41,7 @@ public class SNE_WireItModuleGenerator
 		// First attempt to generate modules based on OWL Classes
 		ModuleGenerator gen = new ModuleGenerator(sesameURL, repositoryName,RepositoryType.OWLClasses);
 		// If we get any root, give this OWL Classes
-		if(gen.hasAnyRoot()) return gen.getRootNodes();
+		if(!gen.isEmpty()) return gen.getRootNodes();
 		
 		// We don't get any OWL Classes, let us try RDFS Classes
 		gen = new ModuleGenerator(sesameURL, repositoryName, RepositoryType.RDFSClasses);
@@ -66,12 +66,12 @@ public class SNE_WireItModuleGenerator
 	) {
 		
 		Cache cache = SNE_CacheManager.getCache();
-		String cacheKey = "Results-"+repositoryName+"-"+sesameURL;
+		String cacheKey = "GetCache-"+repositoryName+"-"+sesameURL;
 		if(cache.get(cacheKey) != null)
 			return cache.get(cacheKey).toString();
 		
-		ModuleGenerator gen = new ModuleGenerator(sesameURL, repositoryName);
-		if(!gen.hasAnyRoot())
+		ModuleGenerator gen = new ModuleGenerator(sesameURL, repositoryName, RepositoryType.OWLClasses);
+		if(gen.isEmpty())
 			gen = new ModuleGenerator(sesameURL, repositoryName, RepositoryType.RDFSClasses);
 		
 		Vector<Module> modules = gen.getAllModules();

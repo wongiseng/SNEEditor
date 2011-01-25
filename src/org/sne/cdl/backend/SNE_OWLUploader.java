@@ -12,7 +12,8 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.sne.cdl.owl.WireItGraphConstructor;
 
 /**
- * 
+ * Backend processing responsible for uploading local file and generating WireIT modules from owl:Classes found in 
+ * local files.
  * @author wibisono
  *
  */
@@ -31,7 +32,9 @@ public class SNE_OWLUploader
 	@Path("/owl")
 	public String uploadOWL(@FormParam("Filedata") String Filedata) throws OWLOntologyCreationException{
 		
+		
 		WireItGraphConstructor constructor = new WireItGraphConstructor(Filedata);
+		
 		return constructor.getWireItGraph();
 	}	
 	

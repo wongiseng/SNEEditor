@@ -42,7 +42,6 @@ public class SNE_OWLGenerator {
 	@Produces(MediaType.TEXT_HTML)
 	@Consumes(MediaType.APPLICATION_JSON)  // YUI Form post set content-type to JSON
 	public String getFormattedOWLRDF(@FormParam("objString") String objString) throws JSONException, OWLOntologyCreationException, OWLOntologyStorageException, IOException{
-	
 		JSONObject obj = new JSONObject(objString);
 		JSONArray modulesArray = obj.getJSONArray("modules");
 		JSONArray wiresArray = obj.getJSONArray("wires");
@@ -187,7 +186,8 @@ public class SNE_OWLGenerator {
 		Vector<WireItModule> result = new Vector<WireItModule>();
 				
 		for(int i=0;i<modules.length();i++){
-			result.add(new WireItModule(modules.getJSONObject(i)));
+			WireItModule newModule = new WireItModule(modules.getJSONObject(i)); 
+			result.add(newModule);
 		}
 		return result;
 	}
