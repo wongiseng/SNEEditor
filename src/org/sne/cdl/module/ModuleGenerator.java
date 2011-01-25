@@ -90,8 +90,8 @@ public class ModuleGenerator {
 	 */
 	private void generateModules() {
 		// Processing all module URIs
-		// Complexity should be NModules * Max(NObjectProperties,
-		// NDataProperties)
+		// Complexity: (NModules * Max(NObjectProperties, NDataProperties))
+		
 		for (String moduleURI : moduleUris) {
 			Module newModule = new Module();
 			newModule.setId(moduleURI);
@@ -100,24 +100,23 @@ public class ModuleGenerator {
 			for (String dataPropertyURI : dataPropertiesMap.keySet()) {
 				if (isDataPropertyOf(dataPropertyURI, moduleURI)) {
 					// Add this data property as a filed within moduleURI
-					newModule.addDataProperty(dataPropertiesMap
-							.get(dataPropertyURI));
+					newModule.addDataProperty(dataPropertiesMap.get(dataPropertyURI));
 				}
 			}
-
+			//System.out.println(moduleURI);
 			// Check if this modules is a domain/range for an ObjectProperty
 			for (String objectPropertyURI : objectPropertiesMap.keySet()) {
 				if (isDomainOfObjectProperty(objectPropertyURI, moduleURI)) {
-					// Add an output port from this module with the type of this
-					// object property
-					newModule.addObjectPropertyDomain(objectPropertiesMap
-							.get(objectPropertyURI));
+					// Add an output port from this module with the type of this object property
+					//System.out.println("	Adding output port : "+objectPropertyURI+ " because current module/Class is a domain of this property");
+					newModule.addObjectPropertyDomain(objectPropertiesMap.get(objectPropertyURI));
+					
 				}
 				if (isRangeOfObjectProperty(objectPropertyURI, moduleURI)) {
 					// Add an input port to this module with the type of this
 					// object property
-					newModule.addObjectPropertyRange(objectPropertiesMap
-							.get(objectPropertyURI));
+					// System.out.println("	Adding input port : "+objectPropertyURI+ " because current module/Class is a range of this property");
+					newModule.addObjectPropertyRange(objectPropertiesMap.get(objectPropertyURI));
 				}
 			}
 
@@ -178,6 +177,7 @@ public class ModuleGenerator {
 		String propertyDomain = objectPropertiesMap.get(objectPropertyURI).getDomain();
 		if (propertyDomain == null)
 			return false;
+		// System.out.println("> Check > "+propertyDomain+ " "+ moduleURI + "  "+ isParent(propertyDomain,moduleURI));
 		return propertyDomain.equals(moduleURI)
 				|| isParent(propertyDomain, moduleURI);
 	}
@@ -198,10 +198,14 @@ public class ModuleGenerator {
 		String propertyRange = objectPropertiesMap.get(objectPropertyURI).getRange();
 		if (propertyRange == null)
 			return false;
+		//System.out.println("< Check < "+propertyRange+ " "+ moduleURI + "  "+ isParent(propertyRange,moduleURI));
 		return propertyRange.equals(moduleURI)
 				|| isParent(propertyRange, moduleURI);
 	}
-
+	/**
+	 * Initializes the array moduleUris which keeps URI's of Modules. (Which is actually either owl:Class or rdfs:Class
+	 * The reverse map from URI String into integer is also initialized i.e moduleIdMap
+	 */
 	private void initializeModuleURIs() {
 		NModule = classesSPARQLResults.size();
 		moduleUris = new String[NModule];
@@ -320,27 +324,25 @@ public class ModuleGenerator {
 	private Vector<ResultRow> classesSPARQLResults = null;
 	private Vector<ResultRow> parentChildrenSPARQLResults = null;
 
-	/**
-	 * FIXME: These sparql Calls should be parameterized and not hardcoded only
-	 * to return cinegrid OWL Hoping that the static will avoid creating new
-	 * queries when it is already there. Should not be like this once it is
-	 * parameterized.
-	 */
+	
 	private  void initializeAllSPARQLResults() {
 		
-		dataPropertiesSPARQLResults 	= new SPARQLResultParser(connector.getDataPropertyDomainRangeComments()).getResults();
-		objectPropertiesSPARQLResults 	= new SPARQLResultParser(connector.getObjectPropertyDomainRangeComments()).getResults();
 		
 		switch(repType){
-			case OWLClasses :
-				classesSPARQLResults =  new SPARQLResultParser(connector.getOWLClasses()).getResults();
+			case OWLClasses : 
+				classesSPARQLResults 			= new SPARQLResultParser(connector.getOWLClasses()).getResults();
+				dataPropertiesSPARQLResults 	= new SPARQLResultParser(connector.getOWLDataPropertyDomainRangeComments()).getResults();
+				objectPropertiesSPARQLResults 	= new SPARQLResultParser(connector.getOWLObjectPropertyDomainRangeComments()).getResults();
 				break;
 			case RDFSClasses :
-				classesSPARQLResults =  new SPARQLResultParser(connector.getRDFSClasses()).getResults();
+				classesSPARQLResults 			= new SPARQLResultParser(connector.getRDFSClasses()).getResults();
+				dataPropertiesSPARQLResults 	= new SPARQLResultParser(connector.getRDFDataPropertyDomainRangeComments()).getResults();
+				objectPropertiesSPARQLResults 	= new SPARQLResultParser(connector.getRDFObjectPropertyDomainRangeComments()).getResults();
 				break;
 			default :
 				classesSPARQLResults =  new SPARQLResultParser(connector.getOWLClasses()).getResults();
 		}
+		// These one use rdfs:subClassOf works for both OWL and RDFS
 		parentChildrenSPARQLResults 	= new SPARQLResultParser(connector.getParentChildren()).getResults();
 			
 	}
@@ -350,9 +352,10 @@ public class ModuleGenerator {
 	 */
 	Vector<String> rootNodes = new Vector<String>();
 	
-	public boolean hasAnyRoot(){
-		return rootNodes.size() > 0;
+	public boolean isEmpty(){
+		return rootNodes.size() == 0 || modules.size() == 0;
 	}
+	
 	/**
 	 * Getting root nodes of this repository. Originally I rely on the ones implemented in AIDA. 
 	 * Without changing sparql queries send there, some of the classes in OWL which has superclass defined on other class would not be shown as root.
@@ -373,8 +376,13 @@ public class ModuleGenerator {
 	
 	public static void main(String[] args)
 	{
-		ModuleGenerator gen = new ModuleGenerator("http://dev.adaptivedisclosure.org/openrdf-workbench", "ndl_vpn_rdf", RepositoryType.RDFSClasses);
+		ModuleGenerator gen = new ModuleGenerator("http://dev.adaptivedisclosure.org/openrdf-workbench", "sne_ndl_domain", RepositoryType.RDFSClasses);
 		Vector<Module> modules = gen.getAllModules();
-		for(Module m : modules) System.out.println(m);
+		System.out.println("[");
+		for(int i=0;i<modules.size();i++){
+		 if(i!=0) System.out.println(",");
+		 System.out.println(modules.get(i));
+		}
+		System.out.println("]");
 	}
 }
