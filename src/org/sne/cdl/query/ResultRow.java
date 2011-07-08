@@ -5,10 +5,12 @@ import java.util.HashMap;
 
 /**
  * To help me organize  parsing SPARQL queries results
+ * Keys are the columns header and values are the content
  * @author Wongiseng
  *
  */
 public class ResultRow {
+	
 	HashMap<String, String> data = new HashMap<String, String>();
 
 	public void put(String key, String value) {
@@ -22,7 +24,7 @@ public class ResultRow {
 	public Collection<String> values() {
 		return data.values();
 	}
-
+	
 	public String get(String key) {
 		return data.get(key);
 	}

@@ -1,0 +1,1 @@
+http://yuml.me/diagram/scruffy/usecase/[User]-(Instantiate Concepts),(Instantiate Concepts)> (View Hierarchical Structure), (Instantiate Concepts) > (Define Relationships), [User] - (Generate OWL/RDF), [User]-(Download OWL/RDF), [User]-(Upload OWL/RDF), [Administrator]-(Update Ontology), [Administrator]^[User]

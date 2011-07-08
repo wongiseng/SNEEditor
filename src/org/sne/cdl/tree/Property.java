@@ -1,25 +1,43 @@
 package org.sne.cdl.tree;
 
+import java.util.HashSet;
+
 import org.sne.cdl.query.ResultRow;
 
 public abstract class Property {
+	// Temporary hacks, I am not sure if this should allways be allowed.
+	HashSet<String> domains = new HashSet<String>();
+	HashSet<String> ranges = new HashSet<String>();
+	
 	public String getId() {
 		return id;
 	}
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getDomain() {
-		return domain;
+	
+	public HashSet<String> getDomains() {
+		return domains;
 	}
-	public void setDomain(String domain) {
-		this.domain = domain;
+	public void addDomain(String domain){
+		domains.add(domain);
 	}
-	public String getRange() {
-		return range;
+	public HashSet<String> getRanges()
+	{	return ranges;
 	}
-	public void setRange(String range) {
-		this.range = range;
+	public void addRange(String range) {
+		ranges.add(range);
+	}
+	/*
+	 * I did not write this following function, I disown them, and claimed that either it wasn't me or I was drunk when I wrote them.
+	 */
+	public String getFirstRange(){
+		String result = "";
+		for(String x : ranges){
+			result = x;
+			break;
+		}
+		return result;
 	}
 	public String getComment() {
 		return comment;
@@ -29,8 +47,6 @@ public abstract class Property {
 	}
 	// The URI of this property;
 	String id;
-	// The domain of this property;
-	String domain;
 	// The range of this property;
 	String range;
 	// The comment of this property
@@ -38,8 +54,8 @@ public abstract class Property {
 	public Property(){
 	}
 	public Property(ResultRow data) {
-		domain 	= data.get("Domain");
-		range	= data.get("Range");
+		domains.add(data.get("Domain"));
+		ranges.add(data.get("Range"));
 		comment = data.get("Comment");
 		setID(data);
 	}

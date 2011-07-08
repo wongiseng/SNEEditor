@@ -2,6 +2,7 @@ package org.sne.cdl.module;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Vector;
 import java.util.logging.Logger;
 
@@ -18,8 +19,6 @@ import org.sne.cdl.tree.ObjectProperty;
  * @author wibisono
  * 
  */
-
-
 public class ModuleGenerator {
 
 	// Number of modules we have
@@ -90,34 +89,43 @@ public class ModuleGenerator {
 	 */
 	private void generateModules() {
 		// Processing all module URIs
-		// Complexity should be NModules * Max(NObjectProperties,
-		// NDataProperties)
+		// Complexity: (NModules * Max(NObjectProperties, NDataProperties))
+
+		//  Additional field allowing customization of Base Address 
+		ResultRow baseAddressResultRow = new ResultRow();
+		baseAddressResultRow.put("Range", "string");
+		baseAddressResultRow.put("Comment", "Custom Base Address");
+		
 		for (String moduleURI : moduleUris) {
 			Module newModule = new Module();
 			newModule.setId(moduleURI);
-
+			
+			
 			// Check if this modules is a domain for a DataProperty
 			for (String dataPropertyURI : dataPropertiesMap.keySet()) {
 				if (isDataPropertyOf(dataPropertyURI, moduleURI)) {
-					// Add this data property as a filed within moduleURI
-					newModule.addDataProperty(dataPropertiesMap
-							.get(dataPropertyURI));
+					// Add this data property as a field within moduleURI
+					newModule.addDataProperty(dataPropertiesMap.get(dataPropertyURI));
 				}
 			}
-
+			baseAddressResultRow.put("Domain", moduleURI);
+			baseAddressResultRow.put("DataProperty", moduleURI.substring(0,moduleURI.lastIndexOf('#')+1)+ "BaseAddress");
+			newModule.addDataProperty(new DataProperty(baseAddressResultRow));
+			
+			//System.out.println(moduleURI);
 			// Check if this modules is a domain/range for an ObjectProperty
 			for (String objectPropertyURI : objectPropertiesMap.keySet()) {
 				if (isDomainOfObjectProperty(objectPropertyURI, moduleURI)) {
-					// Add an output port from this module with the type of this
-					// object property
-					newModule.addObjectPropertyDomain(objectPropertiesMap
-							.get(objectPropertyURI));
+					// Add an output port from this module with the type of this object property
+					//System.out.println("	Adding output port : "+objectPropertyURI+ " because current module/Class is a domain of this property");
+					newModule.addObjectPropertyDomain(objectPropertiesMap.get(objectPropertyURI));
+					
 				}
 				if (isRangeOfObjectProperty(objectPropertyURI, moduleURI)) {
 					// Add an input port to this module with the type of this
 					// object property
-					newModule.addObjectPropertyRange(objectPropertiesMap
-							.get(objectPropertyURI));
+					// System.out.println("	Adding input port : "+objectPropertyURI+ " because current module/Class is a range of this property");
+					newModule.addObjectPropertyRange(objectPropertiesMap.get(objectPropertyURI));
 				}
 			}
 
@@ -156,11 +164,13 @@ public class ModuleGenerator {
 	 * @return
 	 */
 	public boolean isDataPropertyOf(String dataPropertyURI, String moduleURI) {
-		String propertyDomain = dataPropertiesMap.get(dataPropertyURI).getDomain();
-		if (propertyDomain == null)
+		HashSet<String> propertyDomains = dataPropertiesMap.get(dataPropertyURI).getDomains();
+		
+		if (propertyDomains == null)
 			return false;
-		return propertyDomain.equals(moduleURI)
-				|| isParent(propertyDomain, moduleURI);
+
+		return propertyDomains.contains(moduleURI)
+				|| areParent(propertyDomains, moduleURI);
 	}
 
 	/**
@@ -175,11 +185,18 @@ public class ModuleGenerator {
 	 */
 	public boolean isDomainOfObjectProperty(String objectPropertyURI,
 			String moduleURI) {
-		String propertyDomain = objectPropertiesMap.get(objectPropertyURI).getDomain();
-		if (propertyDomain == null)
+		HashSet<String> propertyDomains = objectPropertiesMap.get(objectPropertyURI).getDomains();
+		if (propertyDomains == null)
 			return false;
-		return propertyDomain.equals(moduleURI)
-				|| isParent(propertyDomain, moduleURI);
+		
+		return propertyDomains.contains(moduleURI) || areParent(propertyDomains, moduleURI);
+	}
+
+	private boolean areParent(HashSet<String> propertyDomains, String moduleURI)
+	{
+		for(String parent : propertyDomains)
+			if(isParent(parent,moduleURI)) return true;
+		return false;
 	}
 
 	/**
@@ -195,13 +212,17 @@ public class ModuleGenerator {
 
 	public boolean isRangeOfObjectProperty(String objectPropertyURI,
 			String moduleURI) {
-		String propertyRange = objectPropertiesMap.get(objectPropertyURI).getRange();
-		if (propertyRange == null)
+		HashSet<String> propertyRanges = objectPropertiesMap.get(objectPropertyURI).getRanges();
+		
+		if (propertyRanges == null)
 			return false;
-		return propertyRange.equals(moduleURI)
-				|| isParent(propertyRange, moduleURI);
+		//System.out.println("< Check < "+propertyRange+ " "+ moduleURI + "  "+ isParent(propertyRange,moduleURI));
+		return propertyRanges.contains(moduleURI) || areParent(propertyRanges, moduleURI);
 	}
-
+	/**
+	 * Initializes the array moduleUris which keeps URI's of Modules. (Which is actually either owl:Class or rdfs:Class
+	 * The reverse map from URI String into integer is also initialized i.e moduleIdMap
+	 */
 	private void initializeModuleURIs() {
 		NModule = classesSPARQLResults.size();
 		moduleUris = new String[NModule];
@@ -219,8 +240,15 @@ public class ModuleGenerator {
 	private void initializeObjectProperties() {
 		objectPropertiesMap = new HashMap<String, ObjectProperty>();
 		for (ResultRow r : objectPropertiesSPARQLResults) {
+			
 			ObjectProperty newProperty = new ObjectProperty(r);
-			objectPropertiesMap.put(newProperty.getId(), newProperty);
+			if(!objectPropertiesMap.containsKey(newProperty.getId()))
+				objectPropertiesMap.put(newProperty.getId(), newProperty);
+			else {
+				objectPropertiesMap.get(newProperty.getId()).addDomain(r.get("Domain"));
+				objectPropertiesMap.get(newProperty.getId()).addRange(r.get("Range"));
+			}
+				
 		}
 	}
 
@@ -228,7 +256,12 @@ public class ModuleGenerator {
 		dataPropertiesMap = new HashMap<String, DataProperty>();
 		for (ResultRow r : dataPropertiesSPARQLResults) {
 			DataProperty newProperty = new DataProperty(r);
-			dataPropertiesMap.put(newProperty.getId(), newProperty);
+			if(!dataPropertiesMap.containsKey(newProperty.getId()))
+				dataPropertiesMap.put(newProperty.getId(), newProperty);
+			else {
+				dataPropertiesMap.get(newProperty.getId()).addDomain(r.get("Domain"));
+				dataPropertiesMap.get(newProperty.getId()).addRange(r.get("Range"));
+			}
 		}
 	}
 
@@ -320,27 +353,25 @@ public class ModuleGenerator {
 	private Vector<ResultRow> classesSPARQLResults = null;
 	private Vector<ResultRow> parentChildrenSPARQLResults = null;
 
-	/**
-	 * FIXME: These sparql Calls should be parameterized and not hardcoded only
-	 * to return cinegrid OWL Hoping that the static will avoid creating new
-	 * queries when it is already there. Should not be like this once it is
-	 * parameterized.
-	 */
+	
 	private  void initializeAllSPARQLResults() {
 		
-		dataPropertiesSPARQLResults 	= new SPARQLResultParser(connector.getDataPropertyDomainRangeComments()).getResults();
-		objectPropertiesSPARQLResults 	= new SPARQLResultParser(connector.getObjectPropertyDomainRangeComments()).getResults();
 		
 		switch(repType){
-			case OWLClasses :
-				classesSPARQLResults =  new SPARQLResultParser(connector.getOWLClasses()).getResults();
+			case OWLClasses : 
+				classesSPARQLResults 			= new SPARQLResultParser(connector.getOWLClasses()).getResults();
+				dataPropertiesSPARQLResults 	= new SPARQLResultParser(connector.getOWLDataPropertyDomainRangeComments()).getResults();
+				objectPropertiesSPARQLResults 	= new SPARQLResultParser(connector.getOWLObjectPropertyDomainRangeComments()).getResults();
 				break;
 			case RDFSClasses :
-				classesSPARQLResults =  new SPARQLResultParser(connector.getRDFSClasses()).getResults();
+				classesSPARQLResults 			= new SPARQLResultParser(connector.getRDFSClasses()).getResults();
+				dataPropertiesSPARQLResults 	= new SPARQLResultParser(connector.getRDFDataPropertyDomainRangeComments()).getResults();
+				objectPropertiesSPARQLResults 	= new SPARQLResultParser(connector.getRDFObjectPropertyDomainRangeComments()).getResults();
 				break;
 			default :
 				classesSPARQLResults =  new SPARQLResultParser(connector.getOWLClasses()).getResults();
 		}
+		// These one use rdfs:subClassOf works for both OWL and RDFS
 		parentChildrenSPARQLResults 	= new SPARQLResultParser(connector.getParentChildren()).getResults();
 			
 	}
@@ -350,9 +381,10 @@ public class ModuleGenerator {
 	 */
 	Vector<String> rootNodes = new Vector<String>();
 	
-	public boolean hasAnyRoot(){
-		return rootNodes.size() > 0;
+	public boolean isEmpty(){
+		return rootNodes.size() == 0 || modules.size() == 0;
 	}
+	
 	/**
 	 * Getting root nodes of this repository. Originally I rely on the ones implemented in AIDA. 
 	 * Without changing sparql queries send there, some of the classes in OWL which has superclass defined on other class would not be shown as root.
@@ -373,7 +405,7 @@ public class ModuleGenerator {
 	
 	public static void main(String[] args)
 	{
-		ModuleGenerator gen = new ModuleGenerator("http://dev.adaptivedisclosure.org/openrdf-workbench", "ndl_vpn_rdf", RepositoryType.RDFSClasses);
+		ModuleGenerator gen = new ModuleGenerator("http://dev.adaptivedisclosure.org/openrdf-workbench", "NOVI-IM", RepositoryType.OWLClasses);
 		Vector<Module> modules = gen.getAllModules();
 		for(Module m : modules) System.out.println(m);
 	}

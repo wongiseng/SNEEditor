@@ -11,6 +11,7 @@ public class Field implements Serializable {
 	String label="label";
 	String name="name";
 	String tooltip = "tooltip";
+	String urlid="";
 	
 	boolean wirable=false;
 	Value value;
@@ -63,7 +64,16 @@ public class Field implements Serializable {
 			   			"\n        \"type\"  		: \""+type +"\","	+
 			   			"\n        \"label\" 		: \""+label+"\","	+
 			   			"\n        \"name\"  		: \""+name +"\" "	+
-(name.equals("Name") ? ",\n        \"required\"		: \"true\"" : "" )+ // FIXME: think of a better way to do this
+			   			// Making sure that Name is required so validation will be provided by inputEx
+			   			(name.equals("Name") ? ",\n        \"required\"		: \"true\"" : "" )+ // FIXME: think of a better way to do this
+			   			// Initialize base address
+			   			(name.equals("BaseAddress") ? ",\n        \"value\"		: \""+urlid+"\"" : "" )+ 
+			   			
 			   "\n      }";
+	}
+	public void setID(String id)
+	{
+		urlid=id;
+		
 	}
 }

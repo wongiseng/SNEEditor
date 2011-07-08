@@ -3,6 +3,7 @@ package org.sne.cdl.owl;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import com.google.appengine.repackaged.org.json.JSONArray;
 import com.google.appengine.repackaged.org.json.JSONException;
 import com.google.appengine.repackaged.org.json.JSONObject;
 
@@ -22,6 +23,8 @@ public class WireItModule {
 	// Instance Name
 	String instanceName;
 
+	// Position as string
+	String positionStr;
 	
 	// Maps containing by default Name as key, and DataProperties if the module has fields
 	// Missing information of type of this values. Probably should have been obtained from other part of WireIt result (original language)
@@ -40,6 +43,11 @@ public class WireItModule {
 		className = object.getString("name");
 		classID	  = object.getString("id");
 		
+		// Gettting the position
+		JSONObject config = object.getJSONObject("config");
+		JSONArray posArr = config.getJSONArray("position");
+		positionStr = posArr.toString();
+		
 		JSONObject jsonValues = object.getJSONObject("value");
 		@SuppressWarnings("rawtypes")
 		Iterator vals = jsonValues.keys();
@@ -49,9 +57,10 @@ public class WireItModule {
 			
 			// Make sure values only contains DataProperties
 			if(key.equals("Name")){
-				instanceName = jsonValues.getString(key);
+				instanceName = sanitizeStringValue(jsonValues.getString(key));
 			} else 
-				valuesMap.put(key, jsonValues.getString(key));
+				valuesMap.put(key, sanitizeStringValue(jsonValues.getString(key)));
+			
 		}
 		
 		try {
@@ -61,13 +70,21 @@ public class WireItModule {
     		
     		while(fieldKeys.hasNext()){
     			String key = fieldKeys.next().toString();
-    			fieldsMap.put(key, fieldsObj.getString(key));
+    			fieldsMap.put(key, sanitizeStringValue(fieldsObj.getString(key)));
+    			
     		}
 		} catch(JSONException e){
 			
 		}
 	}
-	
+	/*
+	 * This is needed for reading existing description of devices which contains colon and slashes for devices/interfaces.
+	 * My OWL Parser does not accept colons and slashes as value for data properties.
+	 */
+	public String sanitizeStringValue(String x){
+		return x; // not really necessary sanitation
+		//return x.replaceAll(":","_").replaceAll("/", "-");
+	}
 	public String getClassID(){
 		return classID;
 	}
@@ -91,4 +108,5 @@ public class WireItModule {
 	public String getTypeOf(String fieldName){
 		return fieldsMap.get(fieldName);
 	}
+	
 }

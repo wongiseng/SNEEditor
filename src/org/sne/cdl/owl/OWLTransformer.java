@@ -5,6 +5,8 @@ import java.util.Map;
 import org.apache.geronimo.mail.util.StringBufferOutputStream;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAnnotation;
+import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -20,9 +22,10 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.PrefixManager;
 import org.semanticweb.owlapi.util.DefaultPrefixManager;
+import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
 /**
- * Transforming WireItModule Objects representation into OWL 
+ * Transforming WireItModule Objects representation into OWL using OWL API
  * @author Wibisono
  *
  */
@@ -34,17 +37,22 @@ public class OWLTransformer {
 	OWLOntology ontology;
 	
 	public OWLTransformer() throws OWLOntologyCreationException {
-		IRI iri = IRI.create("http://cinegrid.uvalight.nl/owl/cdl/2.0");
+		/**
+		 * FIXME: This should be configurable I suppose, don't do it this way for everything.
+		 */
+		IRI iri = IRI.create("http://fp7-novi.eu/im.owl");
 		owlManager=OWLManager.createOWLOntologyManager();
-		prefixManager = new DefaultPrefixManager("http://cinegrid.uvalight.nl/owl/cdl/2.0#");
+		// Default when prefix are not defined
+		prefixManager = new DefaultPrefixManager("http://fp7-novi.eu/im.owl#");
 		owlFactory = owlManager.getOWLDataFactory();
 		//ontology = owlManager.loadOntologyFromOntologyDocument(iri);
 		ontology = owlManager.createOntology(iri);
+		
 	}
 
 	public void declareClassAndIndividu(WireItModule m) {
 		
-		PrefixManager currentPrefix = new DefaultPrefixManager(m.getPrefixString());
+		PrefixManager currentPrefix = new DefaultPrefixManager(m.getDataPropertiesMap().get("BaseAddress"));
 		
 		// Instantiate OWL Class according to the type m.name
 		OWLClass owlClass = owlFactory.getOWLClass(m.getClassName(),currentPrefix);		
@@ -58,16 +66,29 @@ public class OWLTransformer {
 		
 		// Assert this axiom into ontology
 		owlManager.addAxiom(ontology, classAxiom);
-	
+		
+		// Position is stored as an annotation within OWL/RDF
+		OWLAnnotation positionAnnotation = owlFactory.getOWLAnnotation(
+				owlFactory.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_COMMENT.getIRI()),
+				owlFactory.getOWLLiteral("Position : "+m.positionStr, "en"));
+		
+		// Specify that the pizza class has an annotation - to do this we attach an entity annotation using
+		// an entity annotation axiom (remember, classes are entities)
+		OWLAxiom positionAxiom = owlFactory.getOWLAnnotationAssertionAxiom(owlIndividual.getIRI(), positionAnnotation);
+		owlManager.addAxiom(ontology, positionAxiom);
+		
 		// Create dataProperty for each values/field.
 		Map<String, String> dataPropertyMap = m.getDataPropertiesMap();
+		
+		
 		if(dataPropertyMap != null)
 		for(String dataPropertyName : dataPropertyMap.keySet()){
-			
+			if(dataPropertyName.equals("BaseAddress")) continue;
 			String currentType = m.getTypeOf(dataPropertyName);
 			
 			// Instantiate data property for this data property name 
 			// CHECK: Not quite sure if currentPrefix is the right one for this, since it is from the class
+			
 			OWLDataProperty dataProperty = owlFactory.getOWLDataProperty(dataPropertyName, currentPrefix);
 			
 			// By default use literal/string
@@ -94,7 +115,10 @@ public class OWLTransformer {
 	}
 
 	public void declareObjectProperty(WireItWire w) {
-		
+		//System.out.println("Check WireItWire domain "+ w.getDomainClass()+" "+w.getDomainIndividu());
+		//System.out.println("Check WireItWire range "+ w.getRangeClass()+" "+w.getRangeIndividu());
+		//System.out.println("Check WireItWire OP "+ w.getObjectProperty());
+			
 		// Instantiate Domain Class
 		OWLClass domainClass = owlFactory.getOWLClass(w.getDomainClass(),prefixManager);
 		// Instantiate Domain Individual
@@ -113,9 +137,11 @@ public class OWLTransformer {
 		OWLObjectProperty objectProperty = owlFactory.getOWLObjectProperty(w.getObjectProperty(), prefixManager);
 		
 		// Assert that domain Individu and Range Individu is associated with this ObjectProperty
+		// FIXME: Temporary reverse hack, don't know what's wrong with NOVI !!!
 		OWLObjectPropertyAssertionAxiom 
-			objectPropertyAssertion = owlFactory.getOWLObjectPropertyAssertionAxiom(objectProperty, domainIndividu, rangeIndividu);
-	
+			//objectPropertyAssertion = owlFactory.getOWLObjectPropertyAssertionAxiom(objectProperty, domainIndividu, rangeIndividu);
+			objectPropertyAssertion = owlFactory.getOWLObjectPropertyAssertionAxiom(objectProperty, rangeIndividu, domainIndividu);
+		
 		// So far we are just instantiating classes without adding them to the ontology.
 		// Now use ontology manager to include all axioms that have been asserted.
 		owlManager.addAxiom(ontology, domainClassAxiom);

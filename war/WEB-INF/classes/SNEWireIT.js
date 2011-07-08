@@ -303,7 +303,8 @@ WireIt.Wire = function( terminal1, terminal2, parentEl, options) {
     */
    this.terminal2 = terminal2;
 
-	
+   // AWS: Confused
+   this.label = terminal1.label;
    /**
     * Event that is fired when a wire is clicked (on the wire, not the canvas)
     * You can register this event with myWire.eventWireClick.subscribe(function(e,params) { var wire = params[0], xy = params[1];}, scope);
@@ -342,7 +343,6 @@ WireIt.Wire = function( terminal1, terminal2, parentEl, options) {
    
    // CSS classname
    YAHOO.util.Dom.addClass(this.element, this.className);
-
    // Label
 	if(this.label) {
 		this.renderLabel();
@@ -600,8 +600,9 @@ YAHOO.lang.extend(WireIt.Wire, WireIt.CanvasElement, {
 	 * Position the label element to the center
 	 */
 	positionLabel: function() {
-	  YAHOO.util.Dom.setStyle(this.labelEl,"left",(this.min[0]+this.max[0]-this.labelEl.clientWidth)/2);
-	  YAHOO.util.Dom.setStyle(this.labelEl,"top",(this.min[1]+this.max[1]-this.labelEl.clientHeight)/2);
+	  
+		YAHOO.util.Dom.setStyle(this.labelEl,"left",(this.min[0]+this.max[0]-this.labelEl.clientWidth)/2+ "px");
+		YAHOO.util.Dom.setStyle(this.labelEl,"top",(this.min[1]+this.max[1]-this.labelEl.clientHeight)/2+ "px");	 
 	},
    
    /**
@@ -1580,11 +1581,15 @@ lang.extend(WireIt.TerminalProxy, YAHOO.util.DDProxy, {
 	 * @method isValidWireTerminal
 	 */
 	isValidWireTerminal: function(DDterminal) {
-   
+
+		
 	   if( !DDterminal.isWireItTerminal ) {
 	      return false;
 	   }
-   
+	   
+	   // AWS trying to disallow input connected to output
+	   
+	   
 	   // If this terminal has the type property:
 	   if(this.termConfig.type) {
 	      if(this.termConfig.allowedTypes) {
@@ -2009,8 +2014,8 @@ WireIt.Terminal.prototype = {
     * @param {WireIt.Wire} wire Wire instance to add
     */
    addWire: function(wire) {
-   
-      // Adds this wire to the list of connected wires :
+	  
+	   // Adds this wire to the list of connected wires :
       this.wires.push(wire);
    
       // Set class indicating that the wire is connected
@@ -3221,7 +3226,6 @@ WireIt.Layer.prototype = {
    
       var src = wireConfig.src;
       var tgt = wireConfig.tgt;
-   
       var terminal1 = this.containers[src.moduleId].getTerminal(src.terminal);
       var terminal2 = this.containers[tgt.moduleId].getTerminal(tgt.terminal);
       var wire = new klass( terminal1, terminal2, this.el, wireConfig);
@@ -8036,15 +8040,18 @@ WireIt.BaseEditor.defaultOptions = {
 	layoutOptions: {
 	 	units: [
 	 	        { position: 'top', height: 57, body: 'top'},
-	 	        { position: 'left', width: 220, resize: true, body: 'left',   gutter: '5px', collapse: true, collapseSize: 25, /*header: 'Ontologies' */ scroll: true,  animate: true },
+	 	        { position: 'left', width: 275, resize: true, body: 'left',   gutter: '5px', collapse: true, collapseSize: 25, /*header: 'Ontologies' */ scroll: true,  animate: true },
 	 	        { position: 'center', body: 'center', gutter: '5px' },
 	 	        { position: 'right', width: 250, resize: true, body: 'right', gutter: '5px', collapse: true, collapseSize: 25, /*header: 'Properties', scroll: true,*/ animate: true }
 	   ]
 	},
 
 	propertiesFields: [
-		{"type": "string", "name": "name", label: "Title", typeInvite: "Enter a title" },
-		{"type": "text", "name": "description", label: "Description", cols: 30, rows: 4}
+		{"type": "string", "name": "name", label: "File Name", typeInvite: "download.owl", size:35},
+		
+		{"type": "string", "name": "name", label: "Base Address", typeInvite: "http://fp7-novi.eu/im.owl#", size:35},
+		{"type": "text", "name": "description", label: "Description", cols: 35, rows: 4}
+		
 	],
 	
 	accordionViewParams: {
@@ -8216,20 +8223,23 @@ WireIt.BaseEditor.prototype = {
 	    var newButton = new widget.Button({ label:"New", id:"WiringEditor-newButton", container: toolbar });
 	    newButton.on("click", this.onNew, this, true);
 
-	    var loadButton = new widget.Button({ label:"Load", id:"WiringEditor-loadButton", container: toolbar });
-	    loadButton.on("click", this.load, this, true);
-
-	    
-	    var saveButton = new widget.Button({ label:"Save", id:"WiringEditor-saveButton", container: toolbar });
-	    saveButton.on("click", this.onSave, this, true);
+//	    var loadButton = new widget.Button({ label:"Load", id:"WiringEditor-loadButton", container: toolbar });
+//	    loadButton.on("click", this.load, this, true);
+//
+//	    
+//	    var saveButton = new widget.Button({ label:"Save", id:"WiringEditor-saveButton", container: toolbar });
+//	    saveButton.on("click", this.onSave, this, true);
 
 
 	    //AWS adding upload button
 	    var uploadButton = new widget.Button({ label:"Upload", id:"WiringEditor-uploadButton", container: toolbar });
-	    //uploadButton.on("click", this.onUpload, this, true);
+	    // There is no on click, it will be handled by a flash uploader object YUI uploader.
+	    
+	    var downloadButton = new widget.Button({ label:"Download", id:"WiringEditor-saveButton", container: toolbar });
+	    downloadButton.on("click", this.onDownload, this, true);
 
-	    var deleteButton = new widget.Button({ label:"Delete", id:"WiringEditor-deleteButton", container: toolbar });
-	    deleteButton.on("click", this.onDelete, this, true);
+	    //var deleteButton = new widget.Button({ label:"Delete", id:"WiringEditor-deleteButton", container: toolbar });
+	    //deleteButton.on("click", this.onDelete, this, true);
 
 	    var helpButton = new widget.Button({ label:"Help", id:"WiringEditor-helpButton", container: toolbar });
 	    helpButton.on("click", this.onHelp, this, true);
@@ -8665,21 +8675,22 @@ lang.extend(WireIt.WiringEditor, WireIt.BaseEditor, {
 	  */
 	 onNew: function() {
 	
-		if(!this.isSaved()) {
-			if( !confirm("Warning: Your work is not saved yet ! Press ok to continue anyway.") ) {
-				return;
-			}
+		if( !confirm("Warning: You will lose all your current work, unless you had downloaded it.") ) {
+			return;
 		}
+		
 	
 		this.preventLayerChangedEvent = true;
 	
-	   this.layer.clear(); 
+		this.layer.clear(); 
 
-	   this.propertiesForm.clear(false); // false to tell inputEx to NOT send the updatedEvt
+		this.propertiesForm.clear(false); // false to tell inputEx to NOT send the updatedEvt
 
 		this.markSaved();
 
 		this.preventLayerChangedEvent = false;
+	 
+		this.tabViews.selectTab(0)
 	 },
 
 	 /**
@@ -8703,6 +8714,51 @@ lang.extend(WireIt.WiringEditor, WireIt.BaseEditor, {
 	    }
 	 },
 
+	 /**
+	  * @method onDownload
+	  */
+	 onDownload: function() {
+			working = this.getValue().working;
+			
+			for(var i=0;i<working.modules.length;i++){
+				// To make it easier to work with later on I am turning this into a map of name -> type hash map that can be used later
+				var fieldArray = this.modulesByID[working.modules[i].id].container.fields;
+				var fieldMap = {}
+				for(var j=0;j<fieldArray.length;j++){
+					fieldMap[fieldArray[j].name] = fieldArray[j].type;
+				}
+				working.modules[i].fields = fieldMap;
+			}
+			
+			//	console.log(working);
+			// 	Backend end point to do POST request. 
+			var sURL = "/rest/owl/getRawOWLRDF";
+			
+			// It is necessary to :
+			// 			- Stringify (getting string of the object) + 
+			//			- encodeURI the whole request to make it looks like FORM POST   
+			var postData = encodeURI("objString="+YAHOO.lang.JSON.stringify(working));
+			
+		
+			var handleSuccess = function(o) {
+				// A temporary memcache item in the backend is generated for this
+				if (o.responseText != undefined) {
+					window.location.href = o.responseText;
+				}
+			}
+
+			var handleFailure = function(o) {
+				alert("OWL/RDF can not be generated, make sure all the Data Property Fields are not empty.");
+			}
+			
+			
+			var callback = {
+				success : handleSuccess,
+				failure : handleFailure
+			};
+
+			var request = YAHOO.util.Connect.asyncRequest("POST", sURL, callback, postData);
+	 },
 	 /**
 	  * @method renderLoadPanel
 	  */
@@ -8820,8 +8876,7 @@ lang.extend(WireIt.WiringEditor, WireIt.BaseEditor, {
 	  * Upload method for uploading existing OWL Files
 	  */
 		onUpload : function(){
-			this.theUploader
-			
+			this.theUploader			
 		},
 	 /**
 	  * @method getPipeByName

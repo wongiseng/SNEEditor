@@ -2,6 +2,7 @@ package org.sne.cdl.backend;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 import java.util.Vector;
 
 import javax.jdo.PersistenceManager;
@@ -13,7 +14,11 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import net.sf.jsr107cache.Cache;
 
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
@@ -42,7 +47,7 @@ public class SNE_OWLGenerator {
 	@Produces(MediaType.TEXT_HTML)
 	@Consumes(MediaType.APPLICATION_JSON)  // YUI Form post set content-type to JSON
 	public String getFormattedOWLRDF(@FormParam("objString") String objString) throws JSONException, OWLOntologyCreationException, OWLOntologyStorageException, IOException{
-	
+		System.out.println("When Generating OWL : "+objString);
 		JSONObject obj = new JSONObject(objString);
 		JSONArray modulesArray = obj.getJSONArray("modules");
 		JSONArray wiresArray = obj.getJSONArray("wires");
@@ -54,31 +59,12 @@ public class SNE_OWLGenerator {
 		Vector<WireItWire> wires = extractWireString(wiresArray, modules);
 		
 		String result = generateOWL(modules,wires);
-		result = XhtmlRendererFactory.getRenderer(XhtmlRendererFactory.XML).highlight("Cinegrid Generated OWL", result,"UTF-8", false);
+		result = XhtmlRendererFactory.getRenderer(XhtmlRendererFactory.XML).highlight("Generated OWL/RDF", result,"UTF-8", false);
 	
 		return  result;
 	}
 
-	@POST
-	@Path("/getRawOWLRDF")
-	@Produces(MediaType.TEXT_HTML)
-	@Consumes(MediaType.APPLICATION_JSON)  // YUI Form post set content-type to JSON
-	public String getRawOWLRDF(@FormParam("objString") String objString) throws JSONException, OWLOntologyCreationException, OWLOntologyStorageException, IOException{
 	
-		JSONObject obj = new JSONObject(objString);
-		JSONArray modulesArray = obj.getJSONArray("modules");
-		JSONArray wiresArray = obj.getJSONArray("wires");
-
-		//TODO: Actually we also receive ob.getJSONObject("properties") which should in turns contains description and name of owl ontology.
-		//We need to implement and make use of this in header of OWL.
-		
-		Vector<WireItModule> modules = extractModuleString(modulesArray);
-		Vector<WireItWire> wires = extractWireString(wiresArray, modules);
-		
-		String result = generateOWL(modules,wires);
-		
-		return  result;
-	}
 	/**
 	 * This REST endpoint provides a way for user to view their generated Network Topology in raw OWL format (without synstax highlighting/formatting)
 	 * @param name
@@ -187,7 +173,8 @@ public class SNE_OWLGenerator {
 		Vector<WireItModule> result = new Vector<WireItModule>();
 				
 		for(int i=0;i<modules.length();i++){
-			result.add(new WireItModule(modules.getJSONObject(i)));
+			WireItModule newModule = new WireItModule(modules.getJSONObject(i)); 
+			result.add(newModule);
 		}
 		return result;
 	}
@@ -208,5 +195,48 @@ public class SNE_OWLGenerator {
 		return result;
 	}
 	
-
+	@POST
+	@Path("/getRawOWLRDF")
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	@Consumes(MediaType.APPLICATION_JSON)  // YUI Form post set content-type to JSON
+	public String getRawOWLRDF(@FormParam("objString") String objString) throws JSONException, OWLOntologyCreationException, OWLOntologyStorageException, IOException{
+	
+		JSONObject obj = new JSONObject(objString);
+		JSONArray modulesArray = obj.getJSONArray("modules");
+		JSONArray wiresArray = obj.getJSONArray("wires");
+		JSONObject properties = obj.getJSONObject("properties");
+		
+		String fileName = properties.getString("name");
+		//String description = properties.getString("description");
+		
+		if(fileName.length() ==0) fileName = "download.owl";
+		
+		//TODO: Actually we also receive ob.getJSONObject("properties") which should in turns contains description and name of owl ontology.
+		//We need to implement and make use of this in header of OWL.
+		
+		Vector<WireItModule> modules = extractModuleString(modulesArray);
+		Vector<WireItWire> wires = extractWireString(wiresArray, modules);
+		
+		String rawOWL = generateOWL(modules,wires);
+		
+		/* Store this result temporarily in memcache to be downloaded with content-disposition header */
+		String randomUUID = UUID.randomUUID().toString();
+		Cache cache = SNE_CacheManager.getCache();
+		cache.put(randomUUID, rawOWL);
+		
+		String downloadURL = "rest/owl/download?dlId="+ randomUUID+"&fileName="+fileName;
+		
+		return downloadURL;
+	}
+	
+	@GET
+	@Path("download")
+	@Produces(MediaType.TEXT_HTML)
+	public Response downloadFromCache(@QueryParam("dlId")String cacheKey, @QueryParam("fileName") String fileName){
+			
+		Cache cache = SNE_CacheManager.getCache();
+		String result = cache.get(cacheKey).toString();
+	
+		return Response.ok(result).header("Content-Disposition", "attachment, filename="+fileName).build();
+	}
 }

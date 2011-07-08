@@ -13,6 +13,7 @@ public class WireItWire {
 		
 	// Currently unforced Assertion here is that src and tgt terminals are the same since ObjectProperty must match.
 	public WireItWire(JSONObject jsonObject, Vector<WireItModule> modules) throws JSONException {
+			//System.out.println("Check WireJSNON"+ jsonObject.toString());
 			src = new Port(jsonObject.getJSONObject("src"), modules);
 			tgt = new Port(jsonObject.getJSONObject("tgt"), modules);
 			
@@ -24,6 +25,11 @@ public class WireItWire {
 					terminal = jsonObject.getString("terminal");
 					className = modules.get(moduleId).getClassName();
 					individuName = modules.get(moduleId).getInstanceName();
+					//System.out.println("Module Id "+moduleId);
+					//System.out.println("Terminal "+terminal);
+					//System.out.println("Classname  "+className);
+					//System.out.println("Individu "+individuName);
+							
 			}
 			// Either source or destination module Index
 			int moduleId;

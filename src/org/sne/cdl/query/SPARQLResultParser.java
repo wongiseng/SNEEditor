@@ -99,8 +99,8 @@ public class SPARQLResultParser {
 	}
 	
 	public static void main(String[] args) {
-		String dataProperties 		=	new SesameConnector().getDataPropertyDomainRangeComments();
-		String objectProperties 	=	new SesameConnector().getObjectPropertyDomainRangeComments();
+		String dataProperties 		=	new SesameConnector().getOWLDataPropertyDomainRangeComments();
+		String objectProperties 	=	new SesameConnector().getOWLObjectPropertyDomainRangeComments();
 		
 		SPARQLResultParser parser = new SPARQLResultParser(dataProperties);
 		SPARQLResultParser parser1 = new SPARQLResultParser(objectProperties);

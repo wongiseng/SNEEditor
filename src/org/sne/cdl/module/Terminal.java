@@ -9,6 +9,8 @@ public class Terminal implements Serializable {
 	String name;
 	int [] direction = new int[]{0,1};
 	OffsetPosition offsetPosition = new OffsetPosition();
+	
+	//Drag and drop config, this is where I configure allowed Types for terminals (ports)
 	DDConfig	ddConfig = new DDConfig();
 	
 	public String getName() {
@@ -38,6 +40,7 @@ public class Terminal implements Serializable {
 	public String toString(){
 		StringBuffer result = new StringBuffer();
 		result.append("\n       \"name\" : \""+name+"\",");
+		result.append("\n       \"label\" : \""+name+"\",");
 		result.append("\n       \"direction\" : ["+direction[0]+","+direction[1]+"], ");
 		result.append("\n       \"offsetPosition\" : {"+offsetPosition .toString()+"},");
 		result.append("\n       \"ddConfig\" : { "+ddConfig.toString()+"}");

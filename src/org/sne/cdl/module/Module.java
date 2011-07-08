@@ -58,12 +58,17 @@ public class Module implements Serializable {
 		newField.setName(dataProperty.getName());
 		newField.setLabel(dataProperty.getName());
 		
-		String rangeType = dataProperty.getRange();		
+		String rangeType = dataProperty.getFirstRange();		
 		newField.setType(getFieldTypeFromRange(rangeType));
 			
 		newField.setTooltip(dataProperty.getComment());
+		String dpID = dataProperty.getId();
+		if(dpID.lastIndexOf('#')>=0) dpID= dpID.substring(0,dpID.lastIndexOf("#")+1);
+		newField.setID(dpID);
 		container.addField(newField);
 	}
+	
+	
 	/*
 	 * Conversion from the data type property range which is defined in XMLSchema#type into
 	 * type that is understood by InputEx llibrary to generate the forms.
@@ -86,7 +91,10 @@ public class Module implements Serializable {
 		Terminal newTerminal = new Terminal();
 		newTerminal.setDirection(new int[]{0,1});
 		newTerminal.setName(objectProperty.getName());
-		newTerminal.setDdConfig(new DDConfig(objectProperty.getName()));
+		
+		// The domain will be output port, DD config sets the type
+		newTerminal.setDdConfig(new DDConfig(objectProperty.getName(),"Output"));
+		
 		container.addTerminal(newTerminal, false);
 	}
 
@@ -102,7 +110,10 @@ public class Module implements Serializable {
 		Terminal newTerminal = new Terminal();
 		newTerminal.setDirection(new int[]{0,-1});		
 		newTerminal.setName(objectProperty.getName());
-		newTerminal.setDdConfig(new DDConfig(objectProperty.getName()));
+		
+		// The range will be input port, DD config sets the type
+		newTerminal.setDdConfig(new DDConfig(objectProperty.getName(),"Input"));
+		
 		container.addTerminal(newTerminal, true);
 	}
 	

@@ -3,8 +3,8 @@
  */
 SNEModTree = function(options) {
 	
-		this.SESAME_URL 		= options.SESAME_URL 		|| "http://dev.adaptivedisclosure.org/openrdf-sesame";
-		this.REPOSITORY_NAME 	= options.REPOSITORY_NAME 	|| "CinegridOWL";
+		this.SESAME_URL 		= options.SESAME_URL 		|| "http://dev.adaptivedisclosure.org";
+		this.REPOSITORY_NAME 	= options.REPOSITORY_NAME 	|| "NOVI-IM";
 		this.HTML_ELEMENT 		= options.HTML_ELEMENT 		|| "module-category-cdl";
 		
 		this.tree = null;
@@ -156,9 +156,7 @@ SNEModTree = function(options) {
 	    	this.moduleGeneratorCallBack.scope = this;
 	    	   
 	 	   	// Retrieve all modules information modules and then later on start building tree
-	 	   	YAHOO.util.Connect.asyncRequest(
-	 	   			'GET', "rest/module/get?sesameURL=http://dev.adaptivedisclosure.org/openrdf-workbench&repositoryName="+this.REPOSITORY_NAME, 
-	 	   			this.moduleGeneratorCallBack); 
+	 	   	YAHOO.util.Connect.asyncRequest('GET', "rest/module/get?sesameURL=http://dev.adaptivedisclosure.org/openrdf-workbench&repositoryName="+this.REPOSITORY_NAME, this.moduleGeneratorCallBack); 
 	 	   	
 	     } // end Init()
 	   

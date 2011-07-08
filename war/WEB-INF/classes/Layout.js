@@ -119,20 +119,25 @@ WireIt.Layout.Spring.prototype = {
 		// Extract nodes positions
 		this.nodes = [];
 		for( i = 0 ; i < this.layer.containers.length ; i++) {
-			var pos = this.layer.containers[i].terminals[0].getXY();
+			var pos = this.layer.containers[i].getXY();
+			
+			//Original WireIT spring uses first terminal/port coordinates. 
+			//In my case there might be no terminals, so we use just above container coords.
+			//var pos = this.layer.containers[i].terminals[0].getXY();
 			
 			this.nodes.push({
 				layoutPosX: (pos[0]-400)/200,
-		      layoutPosY: (pos[1]-400)/200,
-		      layoutForceX: 0,
-		      layoutForceY: 0
+				layoutPosY: (pos[1]-400)/200,
+				layoutForceX: 0,
+		     	layoutForceY: 0
 			});
+			
 		}
 		
 		// Spring layout parameters
 	   var iterations = 100,
 			 maxRepulsiveForceDistance = 6,
-			 k = 0.3,
+			 k = 1.0, // originally 0.3
 			 c = 0.01;
 		
 		var d,dx,dy,d2,node,node1,node2;
@@ -168,7 +173,7 @@ WireIt.Layout.Spring.prototype = {
 			    // Forces on this.nodes due to edge attractions
 			    for (i = 0; i < this.edges.length; i++) {
 			        var edge = this.edges[i];
-					  node1 = this.nodes[ edge[0] ];
+					node1 = this.nodes[ edge[0] ];
 			        node2 = this.nodes[ edge[1] ];
 
 			        dx = node2.layoutPosX - node1.layoutPosX;
@@ -204,16 +209,22 @@ WireIt.Layout.Spring.prototype = {
 			      node.layoutForceY = 0;
 			    }
 	    }
-	
-		 var newPositions = [];
-		 for( i = 0 ; i < this.layer.containers.length ; i++) {
+	    //Adjust negative positions
+	    var minX = 10000, minY=10000;
+	    for( i = 0 ; i < this.nodes.length ; i++) {
+	    	if(this.nodes[i].layoutPosX < minX) minX = this.nodes[i].layoutPosX;
+	    	if(this.nodes[i].layoutPosY < minY) minY = this.nodes[i].layoutPosY;
+	    }
+	    if(minX > 0 ) minX = 0;
+	    if(minY > 0 ) minY = 0;
+	    
+		var newPositions = [];
+		for( i = 0 ; i < this.nodes.length ; i++) {
 			node = this.nodes[i];
-			newPositions.push([node.layoutPosX*200+400-40, node.layoutPosY*200+400-20]);
-		 }
-		 return newPositions;
+			newPositions.push([(-minX+node.layoutPosX)*200+400-40, (-minY+node.layoutPosY)*200+400-20]);
+		}
+		return newPositions;
 		
 	}
-	
-	
 	
 };

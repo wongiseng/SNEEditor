@@ -1,14 +1,13 @@
 package org.sne.cdl.backend;
 
-import java.util.Vector;
+import java.util.Vector; 
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-
-import net.sf.jsr107cache.Cache;
+ 
 
 import org.sne.cdl.module.Module;
 import org.sne.cdl.module.ModuleGenerator;
@@ -38,13 +37,21 @@ public class SNE_WireItModuleGenerator
 			@QueryParam("sesameURL") String sesameURL,
 			@QueryParam("repositoryName") String repositoryName
 	){
+//		Cache cache = SNE_CacheManager.getCache();
+//		String cacheKey = "DeRoot-"+repositoryName+"-"+sesameURL;
+//		if(cache.get(cacheKey) != null)
+//			return cache.get(cacheKey).toString();
+		
 		// First attempt to generate modules based on OWL Classes
 		ModuleGenerator gen = new ModuleGenerator(sesameURL, repositoryName,RepositoryType.OWLClasses);
 		// If we get any root, give this OWL Classes
-		if(gen.hasAnyRoot()) return gen.getRootNodes();
+		if(!gen.isEmpty()) return gen.getRootNodes();
 		
 		// We don't get any OWL Classes, let us try RDFS Classes
 		gen = new ModuleGenerator(sesameURL, repositoryName, RepositoryType.RDFSClasses);
+		
+//		cache.put(cacheKey,gen.getRootNodes());
+		
 		// Hopefully now we get RDFSClasses
 		return gen.getRootNodes();
 	}	
@@ -65,13 +72,13 @@ public class SNE_WireItModuleGenerator
 			@QueryParam("repositoryName") String repositoryName
 	) {
 		
-		Cache cache = SNE_CacheManager.getCache();
-		String cacheKey = "Results-"+repositoryName+"-"+sesameURL;
-		if(cache.get(cacheKey) != null)
-			return cache.get(cacheKey).toString();
+//		Cache cache = SNE_CacheManager.getCache();
+//		String cacheKey = "CurrentCache-"+repositoryName+"-"+sesameURL;
+//		if(cache.get(cacheKey) != null)
+//			return cache.get(cacheKey).toString();
 		
-		ModuleGenerator gen = new ModuleGenerator(sesameURL, repositoryName);
-		if(!gen.hasAnyRoot())
+		ModuleGenerator gen = new ModuleGenerator(sesameURL, repositoryName, RepositoryType.OWLClasses);
+		if(gen.isEmpty())
 			gen = new ModuleGenerator(sesameURL, repositoryName, RepositoryType.RDFSClasses);
 		
 		Vector<Module> modules = gen.getAllModules();
@@ -86,7 +93,7 @@ public class SNE_WireItModuleGenerator
 		result.deleteCharAt(result.length() - 1);
 		result.append("\n}");
 	
-		cache.put(cacheKey, result.toString());
+//		cache.put(cacheKey, result.toString());
 		return result.toString();
 	}
 	
