@@ -137,10 +137,9 @@ public class OWLTransformer {
 		OWLObjectProperty objectProperty = owlFactory.getOWLObjectProperty(w.getObjectProperty(), prefixManager);
 		
 		// Assert that domain Individu and Range Individu is associated with this ObjectProperty
-		// FIXME: Temporary reverse hack, don't know what's wrong with NOVI !!!
 		OWLObjectPropertyAssertionAxiom 
-			//objectPropertyAssertion = owlFactory.getOWLObjectPropertyAssertionAxiom(objectProperty, domainIndividu, rangeIndividu);
-			objectPropertyAssertion = owlFactory.getOWLObjectPropertyAssertionAxiom(objectProperty, rangeIndividu, domainIndividu);
+		objectPropertyAssertion = owlFactory.getOWLObjectPropertyAssertionAxiom(objectProperty, domainIndividu, rangeIndividu);
+
 		
 		// So far we are just instantiating classes without adding them to the ontology.
 		// Now use ontology manager to include all axioms that have been asserted.

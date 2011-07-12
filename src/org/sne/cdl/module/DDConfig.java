@@ -22,24 +22,35 @@ public class DDConfig implements Serializable {
 
 	String portNameType="";
 	String allowedType="";
+	boolean alwaysSrc=true;
+	
 	public DDConfig(){
 			
 	}
-		
+	boolean isSource(){
+		return alwaysSrc;
+	}
 	public DDConfig(String portName, String type){
 		portNameType = portName+"-"+type;
 		
-		if(type.endsWith("Output"))
-			allowedType = portName+"-Input";		
-		else
+		if(type.endsWith("Output")){
+			allowedType = portName+"-Input";
+			// Output Port is always a source.
+			alwaysSrc = true;
+		}
+		else{
+			alwaysSrc = false;
 			allowedType = portName+"-Output";
+		}
 	}
 	
 	public String toString(){
 		StringBuffer buff = new StringBuffer();		
 		buff.append(" \"type\" : \""+ portNameType + "\",");
-		
-		buff.append(" \"allowedTypes\" : [\"");
+		if(alwaysSrc){
+			buff.append(" \"alwaysSrc\" : \"true\",");
+		}
+		buff.append(" \"allowedTypes\" : [\"");		
 		buff.append(allowedType);
 		buff.append("\"]");
 		return buff.toString();

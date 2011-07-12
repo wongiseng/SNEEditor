@@ -41,6 +41,9 @@ public class Terminal implements Serializable {
 		StringBuffer result = new StringBuffer();
 		result.append("\n       \"name\" : \""+name+"\",");
 		result.append("\n       \"label\" : \""+name+"\",");
+	if(this.ddConfig.isSource()){
+		result.append("\n       \"alwaysSrc\" : \"true\",");
+	}
 		result.append("\n       \"direction\" : ["+direction[0]+","+direction[1]+"], ");
 		result.append("\n       \"offsetPosition\" : {"+offsetPosition .toString()+"},");
 		result.append("\n       \"ddConfig\" : { "+ddConfig.toString()+"}");

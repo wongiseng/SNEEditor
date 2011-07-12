@@ -47,7 +47,7 @@ public class SNE_OWLGenerator {
 	@Produces(MediaType.TEXT_HTML)
 	@Consumes(MediaType.APPLICATION_JSON)  // YUI Form post set content-type to JSON
 	public String getFormattedOWLRDF(@FormParam("objString") String objString) throws JSONException, OWLOntologyCreationException, OWLOntologyStorageException, IOException{
-		System.out.println("When Generating OWL : "+objString);
+		
 		JSONObject obj = new JSONObject(objString);
 		JSONArray modulesArray = obj.getJSONArray("modules");
 		JSONArray wiresArray = obj.getJSONArray("wires");

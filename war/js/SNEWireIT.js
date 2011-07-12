@@ -1543,8 +1543,10 @@ lang.extend(WireIt.TerminalProxy, YAHOO.util.DDProxy, {
 	   }
    
 	   // Switch the order of the terminals if tgt as the "alwaysSrc" property
+	   
 	   var term1 = this.terminal;
 	   var term2 = targetTerminalProxy.terminal;
+	   
 	   if(term2.alwaysSrc) {
 	      term1 = targetTerminalProxy.terminal;
 	      term2 = this.terminal;

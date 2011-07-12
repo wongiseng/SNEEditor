@@ -1,4 +1,6 @@
-
+/**
+ * Main java script file with Ontology Name and Sesame Repository configuration.
+ */
 var SNE  = {
 
 	language : {
