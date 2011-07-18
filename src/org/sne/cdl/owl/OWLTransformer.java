@@ -21,7 +21,6 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.PrefixManager;
-import org.semanticweb.owlapi.util.DefaultPrefixManager;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
 /**
@@ -43,7 +42,7 @@ public class OWLTransformer {
 		IRI iri = IRI.create("http://fp7-novi.eu/im.owl");
 		owlManager=OWLManager.createOWLOntologyManager();
 		// Default when prefix are not defined
-		prefixManager = new DefaultPrefixManager("http://fp7-novi.eu/im.owl#");
+		prefixManager = new SNEPrefixManager("http://fp7-novi.eu/im.owl#");
 		owlFactory = owlManager.getOWLDataFactory();
 		//ontology = owlManager.loadOntologyFromOntologyDocument(iri);
 		ontology = owlManager.createOntology(iri);
@@ -52,7 +51,7 @@ public class OWLTransformer {
 
 	public void declareClassAndIndividu(WireItModule m) {
 		
-		PrefixManager currentPrefix = new DefaultPrefixManager(m.getDataPropertiesMap().get("BaseAddress"));
+		PrefixManager currentPrefix = new SNEPrefixManager(m.getDataPropertiesMap().get("BaseAddress"));
 		
 		// Instantiate OWL Class according to the type m.name
 		OWLClass owlClass = owlFactory.getOWLClass(m.getClassName(),currentPrefix);		
