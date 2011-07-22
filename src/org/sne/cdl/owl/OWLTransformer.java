@@ -25,27 +25,35 @@ import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
 /**
  * Transforming WireItModule Objects representation into OWL using OWL API
+ * Before using this class WireItModules and WireItWires are assumed to be already extracted.
+ * In detail, see SNE_OWL_Generator.java on how this class is used.
+ * 
  * @author Wibisono
  *
  */
 public class OWLTransformer {
 	
 	OWLOntologyManager owlManager;
-	PrefixManager prefixManager; 
+	PrefixManager defaultPrefixManager; 
 	OWLDataFactory owlFactory;
 	OWLOntology ontology;
+	/* FIXME: These should be configurable */
+	static final String DEFAULT_BASE_ADDRESS	= "http://fp7-novi.eu/im.owl";
+	static final String DEFAULT_PREFIX			= "http://fp7-novi.eu/im.owl#";
 	
 	public OWLTransformer() throws OWLOntologyCreationException {
-		/**
-		 * FIXME: This should be configurable I suppose, don't do it this way for everything.
-		 */
-		IRI iri = IRI.create("http://fp7-novi.eu/im.owl");
-		owlManager=OWLManager.createOWLOntologyManager();
+	
+		// Default base address
+		IRI defaultBaseAddress = IRI.create(DEFAULT_BASE_ADDRESS);
+
 		// Default when prefix are not defined
-		prefixManager = new SNEPrefixManager("http://fp7-novi.eu/im.owl#");
-		owlFactory = owlManager.getOWLDataFactory();
-		//ontology = owlManager.loadOntologyFromOntologyDocument(iri);
-		ontology = owlManager.createOntology(iri);
+		defaultPrefixManager = new SNEPrefixManager(DEFAULT_PREFIX);
+
+		owlManager	=	OWLManager.createOWLOntologyManager();
+		owlFactory 	= 	owlManager.getOWLDataFactory();
+		
+		ontology 	= 	owlManager.createOntology(defaultBaseAddress);
+		
 		
 	}
 
@@ -53,8 +61,8 @@ public class OWLTransformer {
 		
 		PrefixManager currentPrefix = new SNEPrefixManager(m.getDataPropertiesMap().get("BaseAddress"));
 		
-		// Instantiate OWL Class according to the type m.name
-		OWLClass owlClass = owlFactory.getOWLClass(m.getClassName(),currentPrefix);		
+		// Instantiate OWL Class according to the type m.name the correct prefix to use here is the default prefix manager.
+		OWLClass owlClass = owlFactory.getOWLClass(m.getClassName(),defaultPrefixManager);		
 		
 		// Instantiate OWL Individual according to instance name
 		
@@ -88,7 +96,7 @@ public class OWLTransformer {
 			// Instantiate data property for this data property name 
 			// CHECK: Not quite sure if currentPrefix is the right one for this, since it is from the class
 			
-			OWLDataProperty dataProperty = owlFactory.getOWLDataProperty(dataPropertyName, currentPrefix);
+			OWLDataProperty dataProperty = owlFactory.getOWLDataProperty(dataPropertyName, defaultPrefixManager);
 			
 			// By default use literal/string
 			OWLLiteral dataPropertyValue = owlFactory.getOWLLiteral(dataPropertyMap.get(dataPropertyName));
@@ -114,32 +122,30 @@ public class OWLTransformer {
 	}
 
 	public void declareObjectProperty(WireItWire w) {
-		//System.out.println("Check WireItWire domain "+ w.getDomainClass()+" "+w.getDomainIndividu());
-		//System.out.println("Check WireItWire range "+ w.getRangeClass()+" "+w.getRangeIndividu());
-		//System.out.println("Check WireItWire OP "+ w.getObjectProperty());
-			
-		// Instantiate Domain Class
-		OWLClass domainClass = owlFactory.getOWLClass(w.getDomainClass(),prefixManager);
+		
+		SNEPrefixManager domainPrefix = new SNEPrefixManager(w.getDomainBaseAddress());
+		SNEPrefixManager rangePrefix = new SNEPrefixManager(w.getRangeBaseAddress());
+		// Instantiate Domain Class, Instantiating class is always with defaultPrefix Manager !!!
+		OWLClass domainClass = owlFactory.getOWLClass(w.getDomainClass(),defaultPrefixManager);
 		// Instantiate Domain Individual
-		OWLNamedIndividual domainIndividu = owlFactory.getOWLNamedIndividual(w.getDomainIndividu(), prefixManager);
+		OWLNamedIndividual domainIndividu = owlFactory.getOWLNamedIndividual(w.getDomainIndividu(), domainPrefix);
 		// Assert that this Domain Individual is instance of Domain Class
 		OWLClassAssertionAxiom domainClassAxiom = owlFactory.getOWLClassAssertionAxiom(domainClass, domainIndividu);
 		
-		// Instantiate Range Class
-		OWLClass rangeClass = owlFactory.getOWLClass(w.getRangeClass(),prefixManager);
+		// Instantiate Range Class Instantiating class is always with defaultPrefix Manager !!!
+		OWLClass rangeClass = owlFactory.getOWLClass(w.getRangeClass(),defaultPrefixManager);
 		// Instantiate Range Individual
-		OWLNamedIndividual rangeIndividu = owlFactory.getOWLNamedIndividual(w.getRangeIndividu(), prefixManager);
+		OWLNamedIndividual rangeIndividu = owlFactory.getOWLNamedIndividual(w.getRangeIndividu(), rangePrefix);
 		// Assert that this Range Individual is instance of rangeClass
 		OWLClassAssertionAxiom rangeClassAxiom  = owlFactory.getOWLClassAssertionAxiom(rangeClass, rangeIndividu);
 		
-		//Instantiate Object Property
-		OWLObjectProperty objectProperty = owlFactory.getOWLObjectProperty(w.getObjectProperty(), prefixManager);
+		//Instantiate Object Property, now I am not sure which prefix manager to use, the range ? the domain? or the default?
+		OWLObjectProperty objectProperty = owlFactory.getOWLObjectProperty(w.getObjectProperty(), defaultPrefixManager);
 		
 		// Assert that domain Individu and Range Individu is associated with this ObjectProperty
 		OWLObjectPropertyAssertionAxiom 
-		objectPropertyAssertion = owlFactory.getOWLObjectPropertyAssertionAxiom(objectProperty, domainIndividu, rangeIndividu);
-
-		
+			objectPropertyAssertion = owlFactory.getOWLObjectPropertyAssertionAxiom(objectProperty, domainIndividu, rangeIndividu);
+	
 		// So far we are just instantiating classes without adding them to the ontology.
 		// Now use ontology manager to include all axioms that have been asserted.
 		owlManager.addAxiom(ontology, domainClassAxiom);

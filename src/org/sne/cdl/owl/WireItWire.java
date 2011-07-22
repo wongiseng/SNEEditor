@@ -1,5 +1,6 @@
 package org.sne.cdl.owl;
 
+import java.util.HashMap;
 import java.util.Vector;
 
 
@@ -17,6 +18,7 @@ public class WireItWire {
 			tgt = new Port(jsonObject.getJSONObject("tgt"), modules);
 			//System.out.println("Check wire, src, tgt"+src+" "+tgt);
 	}
+	static final String DEFAULT_PREFIX			= "http://fp7-novi.eu/im.owl#";
 	
 	class Port {
 			public Port(JSONObject jsonObject, Vector<WireItModule> modules) throws JSONException {
@@ -24,6 +26,11 @@ public class WireItWire {
 					terminal = jsonObject.getString("terminal");
 					className = modules.get(moduleId).getClassName();
 					individuName = modules.get(moduleId).getInstanceName();
+					HashMap<String,String> dataMap =modules.get(moduleId).getDataPropertiesMap();
+					if( dataMap!= null){
+						if(dataMap.get("BaseAddress")!=null)
+							baseAddress = dataMap.get("BaseAddress"); 
+					}
 			}
 			// Either source or destination module Index
 			int moduleId;
@@ -32,6 +39,9 @@ public class WireItWire {
 			
 			String className;
 			String individuName;
+			
+			// Optional base address, by default it will be defaultBaseAddress
+			String  baseAddress=DEFAULT_PREFIX;
 			
 			public String toString(){
 				return "\n\nModule ID : "+moduleId+"\nTerminal: "+terminal+"\nClassName :"+className+"\nIndividuName :"+individuName;
@@ -52,5 +62,11 @@ public class WireItWire {
 	}
 	public String getRangeIndividu() {
 		return tgt.individuName;
+	}
+	public String getRangeBaseAddress(){
+		return tgt.baseAddress;
+	}
+	public String getDomainBaseAddress(){
+		return src.baseAddress;
 	}
 }

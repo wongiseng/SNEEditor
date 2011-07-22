@@ -207,7 +207,7 @@ public class SNE_OWLGenerator {
 		JSONObject properties = obj.getJSONObject("properties");
 		
 		String fileName = properties.getString("name");
-		//String description = properties.getString("description");
+		String description = properties.getString("description");
 		
 		if(fileName.length() ==0) fileName = "download.owl";
 		
