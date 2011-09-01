@@ -53,8 +53,8 @@ public class SNE_OWLUploader
 	@Path("/inferUnion")
 	public String inferUnion(){
 		//Hackish, need to refactor this.
-		OWLDomainUnionOfInference domainUnionInference = new OWLDomainUnionOfInference("http://dev.adaptivedisclosure.org","NOVI");
-		OWLRangeUnionOfInference rangeUnionInference = new OWLRangeUnionOfInference("http://dev.adaptivedisclosure.org","NOVI");
+		OWLDomainUnionOfInference domainUnionInference = new OWLDomainUnionOfInference("http://dev.adaptivedisclosure.org","NOVI-MN");
+		OWLRangeUnionOfInference rangeUnionInference = new OWLRangeUnionOfInference("http://dev.adaptivedisclosure.org","NOVI-MN");
 		
 		try {
 			domainUnionInference.addInferenceTripleStatements();

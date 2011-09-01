@@ -64,7 +64,7 @@ public class OWLTransformer {
 		// Instantiate OWL Class according to the type m.name the correct prefix to use here is the default prefix manager.
 		OWLClass owlClass = owlFactory.getOWLClass(m.getClassName(),defaultPrefixManager);		
 		
-		// Instantiate OWL Individual according to instance name
+		// Instantiate OWL Individual according to instance name Let's say this is in NOVI branch, will I see it in the admin branch?
 		
 		OWLNamedIndividual owlIndividual = owlFactory.getOWLNamedIndividual(m.getInstanceName(), currentPrefix);
 		

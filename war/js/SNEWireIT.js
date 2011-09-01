@@ -2977,8 +2977,39 @@ WireIt.Container.prototype = {
          }
       }
       return null;
-   }
+   },
 
+   /**
+    * @method getSrcTerminal
+    * I need this to get only source terminal *AWS*
+    */
+   getSrcTerminal: function(name) {
+      var term;
+      for(var i = 0 ; i < this.terminals.length ; i++) {
+         term = this.terminals[i];
+         if(!term.alwaysSrc) continue;
+         if(term.name == name) {
+            return term;
+         }
+      }
+      return null;
+   },
+   
+   /**
+    * @method getTgtTerminal
+    * I need this to get only source terminal *AWS*
+    */
+   getTgtTerminal: function(name) {
+      var term;
+      for(var i = 0 ; i < this.terminals.length ; i++) {
+         term = this.terminals[i];
+         if(term.alwaysSrc) continue;
+         if(term.name == name) {
+            return term;
+         }
+      }
+      return null;
+   }
 };
 
 })();/*global YAHOO,WireIt,window */
@@ -3228,8 +3259,8 @@ WireIt.Layer.prototype = {
    
       var src = wireConfig.src;
       var tgt = wireConfig.tgt;
-      var terminal1 = this.containers[src.moduleId].getTerminal(src.terminal);
-      var terminal2 = this.containers[tgt.moduleId].getTerminal(tgt.terminal);
+      var terminal1 = this.containers[src.moduleId].getSrcTerminal(src.terminal);
+      var terminal2 = this.containers[tgt.moduleId].getTgtTerminal(tgt.terminal);
       var wire = new klass( terminal1, terminal2, this.el, wireConfig);
       wire.redraw();
    
