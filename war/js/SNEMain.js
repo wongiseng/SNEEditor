@@ -9,18 +9,18 @@ var SNE  = {
 	
 	// List of repositories html element, repositoryName, label and sesameURL which we wanted to use in current editor. Modules/forms will be generated automatically for this.
 	repositories : [
-	                {el : "module-cdl",  			repositoryName : "CinegridOWL", 		label : "Cinegrid OWL",		sesameURL: "http://dev.adaptivedisclosure.org/openrdf-sesame"},
-	               // {el : "module-ndl_topology", 	repositoryName : "sne_ndl_topology",	label : "NDL Topology",		sesameURL: "http://dev.adaptivedisclosure.org/openrdf-sesame"},
-	                {el : "module-ndl_layer", 		repositoryName : "sne_ndl_layer",		label : "NDL Layer",		sesameURL: "http://dev.adaptivedisclosure.org/openrdf-sesame"},
-	                {el : "module-ndl_capability", 	repositoryName : "sne_ndl_capability",	label : "NDL Capability",	sesameURL: "http://dev.adaptivedisclosure.org/openrdf-sesame"},
-	                {el : "module-ndl_domain", 		repositoryName : "sne_ndl_domain",		label : "NDL Domain",		sesameURL: "http://dev.adaptivedisclosure.org/openrdf-sesame"},
-	                {el : "module-ndl_physical", 	repositoryName : "sne_ndl_physical",	label : "NDL Physical",		sesameURL: "http://dev.adaptivedisclosure.org/openrdf-sesame"},
-	                {el : "module-ndl_vpn",			repositoryName : "ndl_vpn_rdf",		label : "NDL VPN ",			sesameURL: "http://dev.adaptivedisclosure.org/openrdf-sesame"},
-	                {el : "module-wgs84", 			repositoryName : "wgs84_pos",		label : "WGS84 Position",	sesameURL: "http://dev.adaptivedisclosure.org/openrdf-sesame"},
-	                {el : "geyser",		 			repositoryName : "Geyser",			label : "Geyser",			sesameURL: "http://dev.adaptivedisclosure.org/openrdf-sesame"}
+	                {el : "module-cdl",  			repositoryName : "CinegridOWL", 		label : "Cinegrid OWL",		sesameURL: "http://ducktape.wongiseng.com/openrdf-sesame"},
+	               // {el : "module-ndl_topology", 	repositoryName : "sne_ndl_topology",	label : "NDL Topology",		sesameURL: "http://ducktape.wongiseng.com/openrdf-sesame"},
+	                {el : "module-ndl_layer", 		repositoryName : "sne_ndl_layer",		label : "NDL Layer",		sesameURL: "http://ducktape.wongiseng.com/openrdf-sesame"},
+	                {el : "module-ndl_capability", 	repositoryName : "sne_ndl_capability",	label : "NDL Capability",	sesameURL: "http://ducktape.wongiseng.com/openrdf-sesame"},
+	                {el : "module-ndl_domain", 		repositoryName : "sne_ndl_domain",		label : "NDL Domain",		sesameURL: "http://ducktape.wongiseng.com/openrdf-sesame"},
+	                {el : "module-ndl_physical", 	repositoryName : "sne_ndl_physical",	label : "NDL Physical",		sesameURL: "http://ducktape.wongiseng.com/openrdf-sesame"},
+	                {el : "module-ndl_vpn",			repositoryName : "ndl_vpn_rdf",		label : "NDL VPN ",			sesameURL: "http://ducktape.wongiseng.com/openrdf-sesame"},
+	                {el : "module-wgs84", 			repositoryName : "wgs84_pos",		label : "WGS84 Position",	sesameURL: "http://ducktape.wongiseng.com/openrdf-sesame"},
+	                {el : "geyser",		 			repositoryName : "Geyser",			label : "Geyser",			sesameURL: "http://ducktape.wongiseng.com/openrdf-sesame"}
 
-	    //{el : "module-category-pizza", 	repositoryName : "Pizza",				label : "Pizza Ontology",	sesameURL: "http://dev.adaptivedisclosure.org/openrdf-sesame"},
-	    //{el : "module-category-qosawf", 	repositoryName : "sne_cine_qosawf",		label : "QoS AWF",			sesameURL: "http://dev.adaptivedisclosure.org/openrdf-sesame"}
+	    //{el : "module-category-pizza", 	repositoryName : "Pizza",				label : "Pizza Ontology",	sesameURL: "http://ducktape.wongiseng.com/openrdf-sesame"},
+	    //{el : "module-category-qosawf", 	repositoryName : "sne_cine_qosawf",		label : "QoS AWF",			sesameURL: "http://ducktape.wongiseng.com/openrdf-sesame"}
 	],
     
 	/**
