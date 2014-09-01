@@ -1,4 +1,4 @@
-![SNEEditor](http://i.imgur.com/VmOGGl.jpg)
+[![SNEEditor](http://i.imgur.com/VmOGGl.jpg)](http://sneneteditor.appspot.com/main/)
 
 SNE Editor developed to allow user to edit an instance of an existing OWL Ontology. 
 
